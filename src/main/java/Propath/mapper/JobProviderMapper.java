@@ -2,23 +2,33 @@ package Propath.mapper;
 
 import Propath.dto.JobProviderDto;
 import Propath.model.JobProvider;
-import Propath.repository.JobProviderRepository;
+import Propath.model.User;
+import Propath.repository.UserRepository;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JobProviderMapper {
 
-    private JobProviderRepository jobProviderRepository;
+    private final UserRepository userRepository;
 
-    public static JobProviderDto maptoJobProviderDto(JobProvider jobProvider){
+    public JobProviderMapper(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public JobProviderDto maptoJobProviderDto(JobProvider jobProvider) {
         return new JobProviderDto(
                 jobProvider.getId(),
+                jobProvider.getUser().getId(),
                 jobProvider.getCompanyName()
         );
     }
 
-    public static JobProvider maptoJobProvider(JobProviderDto jobProviderDto){
-        return new JobProvider(
-                jobProviderDto.getId(),
-                jobProviderDto.getCompanyName()
-        );
+    public JobProvider maptoJobProvider(JobProviderDto jobProviderDto) {
+        return userRepository.findById(jobProviderDto.getUserId())
+                .map(user -> new JobProvider(
+                        jobProviderDto.getId(),
+                        user,
+                        jobProviderDto.getCompanyName()))
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + jobProviderDto.getUserId()));
     }
 }

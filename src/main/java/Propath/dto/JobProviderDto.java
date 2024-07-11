@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class JobProviderDto {
     private int id;
+    private int userId;
     private String companyName;
 }

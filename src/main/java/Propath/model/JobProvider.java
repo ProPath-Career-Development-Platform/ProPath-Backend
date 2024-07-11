@@ -16,6 +16,10 @@ public class JobProvider {
     @Column(name = "id")
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "company_name")
     private String companyName;
 

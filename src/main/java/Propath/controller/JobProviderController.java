@@ -21,8 +21,7 @@ public class JobProviderController {
     private JobProviderService jobProviderService;
 
     @PostMapping
-    public ResponseEntity<JobProviderDto> saveJobProvider(@RequestBody JobProviderDto jobProviderDto) {
-        logger.info("Received JobProviderDto: {}", jobProviderDto);
+    public ResponseEntity<JobProviderDto> registerJobProvider(@RequestBody JobProviderDto jobProviderDto) {
         JobProviderDto savedJobProvider = jobProviderService.saveJobProvider(jobProviderDto);
         return new ResponseEntity<>(savedJobProvider, HttpStatus.CREATED);
     }
