@@ -16,9 +16,13 @@ import java.util.function.Function;
 public class JwtService {
     private final String SECRET_KEY ="d2ec85c9d724632539519035a5d569b67863269b2edef7c0ecc335c3a8a37d53";
 
-    public String extractEmail(String token){
-        return extractClaim(token, Claims::getSubject);
+    // In JwtService
+    public String extractEmail(String token) {
+        String email = extractClaim(token, Claims::getSubject);
+        System.out.println("Extracted email: " + email);
+        return email;
     }
+
     public boolean isValid(String token, UserDetails user){
         String email = extractEmail(token);
         return email.equals(user.getUsername()) && !isTokenExpired(token);
@@ -42,14 +46,17 @@ public class JwtService {
                 .getPayload();
     }
     public String generateToken(User user) {
-        String token = Jwts.builder()
-                .setSubject(user.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("role", user.getRole().name()) // Include role in token
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignKey())
                 .compact();
-        return token;
     }
+
+
+
 
     private SecretKey getSignKey(){
         byte[] keyBytes = Decoders.BASE64URL.decode(SECRET_KEY);

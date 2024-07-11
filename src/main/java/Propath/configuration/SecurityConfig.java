@@ -30,16 +30,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req->req.requestMatchers("/login/**","/signup/**").permitAll()
+                        req -> req.requestMatchers("/login/**", "/signup/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("Admin")
                                 .requestMatchers("/jobseeker/**").hasAuthority("JobSeeker")
                                 .requestMatchers("/jobprovider/**").hasAuthority("JobProvider")
                                 .anyRequest().authenticated()
                 ).userDetailsService(userDetailsService)
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
