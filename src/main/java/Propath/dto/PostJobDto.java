@@ -17,7 +17,7 @@ public class PostJobDto {
     private int id;
     private int jobProviderId;
     private String jobTitle;
-    private String tags;
+    private List<String> tags;
     private String jobRole;
     private int minSalary;
     private int maxSalary;

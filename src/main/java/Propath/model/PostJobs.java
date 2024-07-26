@@ -26,7 +26,7 @@ public class PostJobs {
     private String jobTitle;
 
     @Column(name = "Tags")
-    private String tags;
+    private List<String> tags;
 
     @Column(name = "job_role")
     private String jobRole;

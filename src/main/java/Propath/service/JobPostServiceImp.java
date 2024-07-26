@@ -6,6 +6,7 @@ import Propath.mapper.jobPostMapper;
 import Propath.model.PostJobs;
 import Propath.repository.JobPostRepository;
 import Propath.repository.JobProviderRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class JobPostServiceImp implements JobPostService {
         new jobPostMapper(jobProviderRepository); // Initialize the mapper with the repository
     }
 
+    @PreAuthorize("hasAuthority('JobProvider')")
     @Override
     public PostJobDto savePostJob(PostJobDto postJobDto) {
         PostJobs postJobs = jobPostMapper.maptoPostJobs(postJobDto);
