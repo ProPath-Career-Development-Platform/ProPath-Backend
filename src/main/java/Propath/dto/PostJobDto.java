@@ -1,12 +1,10 @@
 package Propath.dto;
 
-import Propath.model.CustomQuestions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,5 +28,5 @@ public class PostJobDto {
     private String expiryDate;
     private String jobLevel;
     private String jobDescription;
-//    private List<CustomQuestions> customQuestions = new ArrayList<>();
+    private List<CustomQuestionDto> customQuestions;
 }

@@ -20,6 +20,7 @@ public class JobPostController {
     @PostMapping("/post-a-job")
     public ResponseEntity<PostJobDto> savePostJob(@RequestBody PostJobDto postJobDto, HttpServletRequest request) {
         System.out.println("Authorization: " + request.getHeader("Authorization"));
+        System.out.println("Received PostJobDto: " + postJobDto);
         PostJobDto savedPostJob = jobPostService.savePostJob(postJobDto);
         return new ResponseEntity<>(savedPostJob, HttpStatus.CREATED);
     }

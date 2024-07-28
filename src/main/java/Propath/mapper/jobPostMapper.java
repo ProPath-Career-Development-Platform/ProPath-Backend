@@ -1,18 +1,25 @@
 package Propath.mapper;
 
 import Propath.dto.PostJobDto;
+import Propath.model.CustomQuestions;
 import Propath.model.JobProvider;
 import Propath.model.PostJobs;
 import Propath.repository.JobProviderRepository;
 
+import java.util.stream.Collectors;
+
 public class jobPostMapper {
-    private static JobProviderRepository jobProviderRepository;
+    private final JobProviderRepository jobProviderRepository;
 
     public jobPostMapper(JobProviderRepository jobProviderRepository) {
-        jobPostMapper.jobProviderRepository = jobProviderRepository;
+        this.jobProviderRepository = jobProviderRepository;
     }
 
-    public static PostJobDto maptoPostJobsDto(PostJobs postJobs){
+    public PostJobDto toDto(PostJobs postJobs) {
+        if (postJobs == null) {
+            return null;
+        }
+
         return new PostJobDto(
                 postJobs.getId(),
                 postJobs.getJobProvider().getId(),
@@ -29,29 +36,50 @@ public class jobPostMapper {
                 postJobs.getVacancies(),
                 postJobs.getExpiryDate(),
                 postJobs.getJobLevel(),
-                postJobs.getJobDescription()
+                postJobs.getJobDescription(),
+                postJobs.getCustomQuestions().stream()
+                        .map(CustomQuestionMapper::toDto)
+                        .collect(Collectors.toList())
         );
     }
 
-    public static PostJobs maptoPostJobs(PostJobDto postJobsDto){
-        JobProvider jobProvider = jobProviderRepository.findById(postJobsDto.getJobProviderId()).orElseThrow(() -> new RuntimeException("JobProvider not found"));
-        return new PostJobs(
-                postJobsDto.getId(),
+    public PostJobs toEntity(PostJobDto postJobDto) {
+        if (postJobDto == null) {
+            return null;
+        }
+
+        JobProvider jobProvider = jobProviderRepository.findById(postJobDto.getJobProviderId())
+                .orElseThrow(() -> new RuntimeException("JobProvider not found"));
+
+        PostJobs postJobs = new PostJobs(
+                postJobDto.getId(),
                 jobProvider,
-                postJobsDto.getJobTitle(),
-                postJobsDto.getTags(),
-                postJobsDto.getJobRole(),
-                postJobsDto.getMinSalary(),
-                postJobsDto.getMaxSalary(),
-                postJobsDto.getSalaryType(),
-                postJobsDto.getEducation(),
-                postJobsDto.getExperience(),
-                postJobsDto.getJobType(),
-                postJobsDto.getJobLocation(),
-                postJobsDto.getVacancies(),
-                postJobsDto.getExpiryDate(),
-                postJobsDto.getJobLevel(),
-                postJobsDto.getJobDescription()
+                postJobDto.getJobTitle(),
+                postJobDto.getTags(),
+                postJobDto.getJobRole(),
+                postJobDto.getMinSalary(),
+                postJobDto.getMaxSalary(),
+                postJobDto.getSalaryType(),
+                postJobDto.getEducation(),
+                postJobDto.getExperience(),
+                postJobDto.getJobType(),
+                postJobDto.getJobLocation(),
+                postJobDto.getVacancies(),
+                postJobDto.getExpiryDate(),
+                postJobDto.getJobLevel(),
+                postJobDto.getJobDescription()
         );
+
+        if (postJobDto.getCustomQuestions() != null) {
+            postJobs.setCustomQuestions(postJobDto.getCustomQuestions().stream()
+                    .map(customQuestionDto -> {
+                        CustomQuestions customQuestions = CustomQuestionMapper.toEntity(customQuestionDto);
+                        customQuestions.setPostJobs(postJobs); // Associate with the job post
+                        return customQuestions;
+                    })
+                    .collect(Collectors.toList()));
+        }
+
+        return postJobs;
     }
 }
