@@ -14,6 +14,7 @@ import java.util.List;
 public class PostJobDto {
     private int id;
     private int jobProviderId;
+    private String companyName;
     private String jobTitle;
     private List<String> tags;
     private String jobRole;

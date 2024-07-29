@@ -22,4 +22,6 @@ public class PostedJobsViewController {
         List<PostJobDto> postJobDtos = jobPostService.getAllPostJobs();
         return new ResponseEntity<>(postJobDtos, HttpStatus.OK);
     }
+
+    //get image
 }

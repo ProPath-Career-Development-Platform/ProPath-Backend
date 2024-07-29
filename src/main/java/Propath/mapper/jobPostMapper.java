@@ -23,6 +23,7 @@ public class jobPostMapper {
         return new PostJobDto(
                 postJobs.getId(),
                 postJobs.getJobProvider().getId(),
+                postJobs.getCompanyName(),
                 postJobs.getJobTitle(),
                 postJobs.getTags(),
                 postJobs.getJobRole(),
@@ -54,6 +55,7 @@ public class jobPostMapper {
         PostJobs postJobs = new PostJobs(
                 postJobDto.getId(),
                 jobProvider,
+                postJobDto.getCompanyName(),
                 postJobDto.getJobTitle(),
                 postJobDto.getTags(),
                 postJobDto.getJobRole(),

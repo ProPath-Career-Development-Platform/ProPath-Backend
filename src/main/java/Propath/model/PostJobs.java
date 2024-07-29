@@ -22,6 +22,9 @@ public class PostJobs {
     @JoinColumn(name = "company_id")
     private JobProvider jobProvider;
 
+    @Column(name = "company_name")
+    private String companyName;
+
     @Column(name = "job_title")
     private String jobTitle;
 
@@ -76,9 +79,10 @@ public class PostJobs {
     private List<CustomQuestions> customQuestions = new ArrayList<>();
 
     // Constructor without custom questions, customized form, and isCustomizedFormNeeded
-    public PostJobs(int id, JobProvider jobProvider, String jobTitle, List<String> tags, String jobRole, int minSalary, int maxSalary, String salaryType, String education, String experience, String jobType, String jobLocation, int vacancies, String expiryDate, String jobLevel, String jobDescription) {
+    public PostJobs(int id, JobProvider jobProvider, String companyName, String jobTitle, List<String> tags, String jobRole, int minSalary, int maxSalary, String salaryType, String education, String experience, String jobType, String jobLocation, int vacancies, String expiryDate, String jobLevel, String jobDescription) {
         this.id = id;
         this.jobProvider = jobProvider;
+        this.companyName = companyName;
         this.jobTitle = jobTitle;
         this.tags = tags;
         this.jobRole = jobRole;
