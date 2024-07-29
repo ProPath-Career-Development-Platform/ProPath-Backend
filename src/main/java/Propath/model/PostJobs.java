@@ -25,8 +25,10 @@ public class PostJobs {
     @Column(name = "job_title")
     private String jobTitle;
 
-    @Column(name = "Tags")
-    private String tags;
+    @ElementCollection
+    @CollectionTable(name = "post_jobs_tags", joinColumns = @JoinColumn(name = "post_jobs_id"))
+    @Column(name = "tags")
+    private List<String> tags;
 
     @Column(name = "job_role")
     private String jobRole;
@@ -40,10 +42,10 @@ public class PostJobs {
     @Column(name = "salary_type")
     private String salaryType;
 
-    @Column(name = "Education")
+    @Column(name = "education")
     private String education;
 
-    @Column(name = "Experience")
+    @Column(name = "experience")
     private String experience;
 
     @Column(name = "job_type")
@@ -64,7 +66,32 @@ public class PostJobs {
     @Column(name = "job_description")
     private String jobDescription;
 
-//    @OneToMany(mappedBy = "postJobs", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<CustomQuestions> customQuestions = new ArrayList<>();
+//    @Column(name = "customized_form")
+//    private String customizedForm;
+//
+//    @Column(name = "is_customized_form_needed")
+//    private boolean isCustomizedFormNeeded;
 
+    @OneToMany(mappedBy = "postJobs", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CustomQuestions> customQuestions = new ArrayList<>();
+
+    // Constructor without custom questions, customized form, and isCustomizedFormNeeded
+    public PostJobs(int id, JobProvider jobProvider, String jobTitle, List<String> tags, String jobRole, int minSalary, int maxSalary, String salaryType, String education, String experience, String jobType, String jobLocation, int vacancies, String expiryDate, String jobLevel, String jobDescription) {
+        this.id = id;
+        this.jobProvider = jobProvider;
+        this.jobTitle = jobTitle;
+        this.tags = tags;
+        this.jobRole = jobRole;
+        this.minSalary = minSalary;
+        this.maxSalary = maxSalary;
+        this.salaryType = salaryType;
+        this.education = education;
+        this.experience = experience;
+        this.jobType = jobType;
+        this.jobLocation = jobLocation;
+        this.vacancies = vacancies;
+        this.expiryDate = expiryDate;
+        this.jobLevel = jobLevel;
+        this.jobDescription = jobDescription;
+    }
 }

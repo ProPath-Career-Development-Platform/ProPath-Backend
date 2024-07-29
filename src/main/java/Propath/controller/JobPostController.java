@@ -2,13 +2,14 @@ package Propath.controller;
 
 import Propath.dto.PostJobDto;
 import Propath.service.JobPostService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/jobprovider")
 public class JobPostController {
@@ -17,7 +18,9 @@ public class JobPostController {
 
     //Build save jobs REST API
     @PostMapping("/post-a-job")
-    public ResponseEntity<PostJobDto> savePostJob(@RequestBody PostJobDto postJobDto) {
+    public ResponseEntity<PostJobDto> savePostJob(@RequestBody PostJobDto postJobDto, HttpServletRequest request) {
+        System.out.println("Authorization: " + request.getHeader("Authorization"));
+        System.out.println("Received PostJobDto: " + postJobDto);
         PostJobDto savedPostJob = jobPostService.savePostJob(postJobDto);
         return new ResponseEntity<>(savedPostJob, HttpStatus.CREATED);
     }
