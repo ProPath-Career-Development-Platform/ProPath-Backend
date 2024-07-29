@@ -52,4 +52,5 @@ public class JobPostController {
         jobPostService.deletePostJob(postId);
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
+
 }
