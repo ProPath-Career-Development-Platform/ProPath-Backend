@@ -22,5 +22,13 @@ public class CompanyController {
         CompanyDto newCompany = companyService.RegisterCompany(companyDto);
         return new ResponseEntity<>(newCompany, HttpStatus.CREATED);
     }
+
+    @GetMapping("/home")
+    public ResponseEntity<CompanyDto> getCompanyByUserId(@RequestParam Long userId) {
+        CompanyDto company = companyService.getCompanyByUserId(userId);
+        return ResponseEntity.ok(company);
+    }
+
+
 }
 
