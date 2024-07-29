@@ -3,8 +3,16 @@ package Propath.mapper;
 
 import Propath.dto.CompanyDto;
 import Propath.model.Company;
+import Propath.repository.UserRepository;
+import Propath.model.User;
 
 public class CompanyMapper {
+
+    private static UserRepository userRepository;
+
+    public CompanyMapper(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public static CompanyDto maptoCompanyDto(Company company) {
           return new CompanyDto(
@@ -20,11 +28,15 @@ public class CompanyMapper {
                   company.getCompanyVision(),
                   company.getLocation(),
                   company.getContactNumber(),
-                  company.getEmail()
+                  company.getEmail(),
+                  company.getStatus(),
+                  company.getUser().getId()
+
           );
     }
 
     public static Company maptoCompany(CompanyDto companyDto) {
+        User user = userRepository.findById(companyDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         return new Company(
                 companyDto.getId(),
                 companyDto.getCompanyName(),
@@ -38,7 +50,9 @@ public class CompanyMapper {
                 companyDto.getCompanyVision(),
                 companyDto.getLocation(),
                 companyDto.getContactNumber(),
-                companyDto.getEmail()
+                companyDto.getEmail(),
+                companyDto.getStatus(),
+                user
         );
     }
 }

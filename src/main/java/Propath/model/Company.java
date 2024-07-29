@@ -32,5 +32,10 @@ public class Company {
     private String contactNumber;
     private String email;
 
+    @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'pending'")
+    private String status = "pending";
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

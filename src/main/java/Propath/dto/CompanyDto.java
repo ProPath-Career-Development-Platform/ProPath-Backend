@@ -27,4 +27,6 @@ public class CompanyDto {
     private String location;
     private String contactNumber;
     private String email;
+    private String status;
+    private int userId;
 }
