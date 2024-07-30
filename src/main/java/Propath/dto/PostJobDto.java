@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -30,4 +31,6 @@ public class PostJobDto {
     private String jobLevel;
     private String jobDescription;
     private List<CustomQuestionDto> customQuestions;
+    private String image;
+    private LocalDate postedIn;
 }

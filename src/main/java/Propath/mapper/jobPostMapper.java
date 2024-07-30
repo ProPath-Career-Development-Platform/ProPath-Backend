@@ -40,7 +40,9 @@ public class jobPostMapper {
                 postJobs.getJobDescription(),
                 postJobs.getCustomQuestions().stream()
                         .map(CustomQuestionMapper::toDto)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                postJobs.getImage(),
+                postJobs.getPostedIn()
         );
     }
 
@@ -69,7 +71,9 @@ public class jobPostMapper {
                 postJobDto.getVacancies(),
                 postJobDto.getExpiryDate(),
                 postJobDto.getJobLevel(),
-                postJobDto.getJobDescription()
+                postJobDto.getJobDescription(),
+                postJobDto.getImage(),
+                postJobDto.getPostedIn()
         );
 
         if (postJobDto.getCustomQuestions() != null) {
