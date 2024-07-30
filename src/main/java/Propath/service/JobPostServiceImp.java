@@ -89,4 +89,12 @@ public class JobPostServiceImp implements JobPostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         jobPostRepository.deleteById(Math.toIntExact(postId));
     }
+
+    public List<PostJobDto> getAllRows() {
+        List<PostJobs> postJobs = jobPostRepository.findAll();
+        return postJobs.stream()
+                .map(jobPostMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 }

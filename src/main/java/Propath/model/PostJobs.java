@@ -3,6 +3,7 @@ package Propath.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,9 @@ public class PostJobs {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private JobProvider jobProvider;
+
+    @Column(name = "company_name")
+    private String companyName;
 
     @Column(name = "job_title")
     private String jobTitle;
@@ -75,10 +79,17 @@ public class PostJobs {
     @OneToMany(mappedBy = "postJobs", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CustomQuestions> customQuestions = new ArrayList<>();
 
+    @Column(name = "image")
+    private String image;
+
+    @Column(name = "posted_in", columnDefinition = "DATE DEFAULT CURRENT_DATE")
+    private LocalDate postedIn;
+
     // Constructor without custom questions, customized form, and isCustomizedFormNeeded
-    public PostJobs(int id, JobProvider jobProvider, String jobTitle, List<String> tags, String jobRole, int minSalary, int maxSalary, String salaryType, String education, String experience, String jobType, String jobLocation, int vacancies, String expiryDate, String jobLevel, String jobDescription) {
+    public PostJobs(int id, JobProvider jobProvider, String companyName, String jobTitle, List<String> tags, String jobRole, int minSalary, int maxSalary, String salaryType, String education, String experience, String jobType, String jobLocation, int vacancies, String expiryDate, String jobLevel, String jobDescription, String image, LocalDate postedIn) {
         this.id = id;
         this.jobProvider = jobProvider;
+        this.companyName = companyName;
         this.jobTitle = jobTitle;
         this.tags = tags;
         this.jobRole = jobRole;
@@ -93,5 +104,7 @@ public class PostJobs {
         this.expiryDate = expiryDate;
         this.jobLevel = jobLevel;
         this.jobDescription = jobDescription;
+        this.image = image;
+        this.postedIn = postedIn;
     }
 }
