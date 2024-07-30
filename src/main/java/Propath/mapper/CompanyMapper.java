@@ -5,7 +5,9 @@ import Propath.dto.CompanyDto;
 import Propath.model.Company;
 import Propath.repository.UserRepository;
 import Propath.model.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CompanyMapper {
 
     private static UserRepository userRepository;

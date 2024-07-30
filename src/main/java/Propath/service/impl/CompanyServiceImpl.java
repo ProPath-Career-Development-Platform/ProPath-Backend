@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
 
         private CompanyRepository companyRepository;
+        private CompanyMapper companyMapper;
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
 
