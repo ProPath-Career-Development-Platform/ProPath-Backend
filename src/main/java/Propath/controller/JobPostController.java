@@ -53,4 +53,12 @@ public class JobPostController {
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
 
+    @GetMapping("/my-jobs")
+    public ResponseEntity<List<PostJobDto>> getPostedJobs(@RequestParam int userId) {
+        List<PostJobDto> postedJobs = jobPostService.getPostedJobs(userId);
+        return new ResponseEntity<>(postedJobs, HttpStatus.OK);
+    }
+
+
+
 }

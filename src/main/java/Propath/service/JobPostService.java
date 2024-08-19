@@ -14,5 +14,9 @@ public interface JobPostService {
 
     void deletePostJob(Long postId);
 
+
+    List<PostJobDto> getPostedJobs(int userId);
+
     List<PostJobDto> getAllRows();
+
 }

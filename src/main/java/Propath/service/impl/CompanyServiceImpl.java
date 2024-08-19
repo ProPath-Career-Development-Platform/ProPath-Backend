@@ -1,9 +1,11 @@
 package Propath.service.impl;
 
 import Propath.dto.CompanyDto;
+import Propath.dto.PostJobDto;
 import Propath.exception.ResourceNotFoundException;
 import Propath.mapper.CompanyMapper;
 import Propath.model.Company;
+import Propath.model.PostJobs;
 import Propath.repository.CompanyRepository;
 import Propath.service.CompanyService;
 import lombok.AllArgsConstructor;
@@ -45,8 +47,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDto getCompanyByUserId(Long userId) {
+    public CompanyDto getCompanyByUserId(int userId) {
         Company company = companyRepository.findByUserId(userId);
         return CompanyMapper.maptoCompanyDto(company);
     }
+
+
 }
