@@ -23,6 +23,7 @@ public class jobPostMapper {
         return new PostJobDto(
                 postJobs.getId(),
                 postJobs.getJobProvider().getId(),
+                postJobs.getCompanyName(),
                 postJobs.getJobTitle(),
                 postJobs.getTags(),
                 postJobs.getJobRole(),
@@ -39,7 +40,9 @@ public class jobPostMapper {
                 postJobs.getJobDescription(),
                 postJobs.getCustomQuestions().stream()
                         .map(CustomQuestionMapper::toDto)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                postJobs.getImage(),
+                postJobs.getPostedIn()
         );
     }
 
@@ -54,6 +57,7 @@ public class jobPostMapper {
         PostJobs postJobs = new PostJobs(
                 postJobDto.getId(),
                 jobProvider,
+                postJobDto.getCompanyName(),
                 postJobDto.getJobTitle(),
                 postJobDto.getTags(),
                 postJobDto.getJobRole(),
@@ -67,7 +71,9 @@ public class jobPostMapper {
                 postJobDto.getVacancies(),
                 postJobDto.getExpiryDate(),
                 postJobDto.getJobLevel(),
-                postJobDto.getJobDescription()
+                postJobDto.getJobDescription(),
+                postJobDto.getImage(),
+                postJobDto.getPostedIn()
         );
 
         if (postJobDto.getCustomQuestions() != null) {

@@ -92,6 +92,7 @@ public class JobPostServiceImp implements JobPostService {
     }
 
 
+
     @Override
     public List<PostJobDto> getPostedJobs(int userId) {
         List<PostJobs> postedJobs = jobPostRepository.findByJobProviderId(userId);
@@ -99,4 +100,13 @@ public class JobPostServiceImp implements JobPostService {
                 .map(jobPostMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public List<PostJobDto> getAllRows() {
+        List<PostJobs> postJobs = jobPostRepository.findAll();
+        return postJobs.stream()
+                .map(jobPostMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 }
