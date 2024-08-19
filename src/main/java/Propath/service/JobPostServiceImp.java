@@ -11,6 +11,7 @@ import Propath.repository.JobProviderRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,5 +89,14 @@ public class JobPostServiceImp implements JobPostService {
         PostJobs postJobs = jobPostRepository.findById(postId.intValue())
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
         jobPostRepository.deleteById(Math.toIntExact(postId));
+    }
+
+
+    @Override
+    public List<PostJobDto> getPostedJobs(int userId) {
+        List<PostJobs> postedJobs = jobPostRepository.findByJobProviderId(userId);
+        return postedJobs.stream()
+                .map(jobPostMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

@@ -13,4 +13,6 @@ public interface JobPostService {
     PostJobDto updatePostJob(Long postId, PostJobDto updatedPostJob);
 
     void deletePostJob(Long postId);
+
+    List<PostJobDto> getPostedJobs(int userId);
 }
