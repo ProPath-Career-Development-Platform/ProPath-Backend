@@ -58,6 +58,16 @@ public class JobProviderController {
         return new ResponseEntity<>(savedEvent,HttpStatus.CREATED);
     }
 
+    @GetMapping("/event/{id}")
+    public ResponseEntity<EventDto> getEventById(@PathVariable("id") Long id){
+        EventDto requestEvent = eventService.getEventById(id);
+
+        requestEvent.setUser(null);
+
+        return new ResponseEntity<>(requestEvent,HttpStatus.OK);
+
+    }
+
     @PutMapping("/event/{id}")
     public ResponseEntity<EventDto> updateEvent (@PathVariable("id") Long id , @RequestBody EventDto updateEventDto){
         EventDto updatedEventDto = eventService.updateEvent(id,updateEventDto);

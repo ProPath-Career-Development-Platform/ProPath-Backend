@@ -74,6 +74,8 @@ public class EventServiceImp  implements EventService {
         existingEvent.setLocation(updateEventDto.getLocation());
         existingEvent.setKeyWords(updateEventDto.getKeyWords());
         existingEvent.setDescription(updateEventDto.getDescription());
+        existingEvent.setLatitude(updateEventDto.getLatitude());
+        existingEvent.setLongitude(updateEventDto.getLongitude());
 
         // Save the updated event back to the repository
         Event updatedEvent = eventRepository.save(existingEvent);
@@ -119,6 +121,32 @@ public class EventServiceImp  implements EventService {
                 .collect(Collectors.toList());
 
     }
+
+    @Override
+    public EventDto getEventById(Long eventID) {
+
+        // Get the currently authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Fetch the event associated with the eventID
+        Event event = eventRepository.findByIdAndDeleteFalse(eventID)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+
+        // Check if the event belongs to the currently authenticated user
+        if (event.getUser().getId() != (user.getId())) {
+            throw new RuntimeException("Unauthorized request: user does not own this event.");
+        }
+
+        // Convert Event entity to EventDto
+        return EventMapper.maptoEventDto(event);
+    }
+
 
 
 

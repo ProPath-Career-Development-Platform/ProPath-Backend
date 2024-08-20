@@ -30,6 +30,7 @@ public class Event {
     private double latitude;
     private double longitude;
     private List<String> keyWords;
+    @Column(columnDefinition = "TEXT")
     private String description;
     @Column(nullable = false,columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean delete;
