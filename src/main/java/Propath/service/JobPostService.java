@@ -1,5 +1,6 @@
 package Propath.service;
 
+import Propath.dto.ApplicantDto;
 import Propath.dto.PostJobDto;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface JobPostService {
 
     List<PostJobDto> getAllRows();
 
+    List<ApplicantDto> getApplicants(int jobId);
+
+    List<ApplicantDto> getApplicantsByIds(List<Long> ids);
 }
