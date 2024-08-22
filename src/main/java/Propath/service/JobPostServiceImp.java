@@ -1,11 +1,15 @@
 package Propath.service;
 
+import Propath.dto.ApplicantDto;
 import Propath.dto.PostJobDto;
 import Propath.exception.ResourceNotFoundException;
+import Propath.mapper.ApplicantMapper;
 import Propath.mapper.CustomQuestionMapper;
 import Propath.mapper.jobPostMapper;
+import Propath.model.Applicant;
 import Propath.model.CustomQuestions;
 import Propath.model.PostJobs;
+import Propath.repository.ApplicantRepository;
 import Propath.repository.JobPostRepository;
 import Propath.repository.JobProviderRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,11 +25,13 @@ public class JobPostServiceImp implements JobPostService {
     private final JobPostRepository jobPostRepository;
     private final JobProviderRepository jobProviderRepository;
     private final jobPostMapper jobPostMapper;
+    private final ApplicantRepository applicantRepository;
 
-    public JobPostServiceImp(JobPostRepository jobPostRepository, JobProviderRepository jobProviderRepository) {
+    public JobPostServiceImp(JobPostRepository jobPostRepository, JobProviderRepository jobProviderRepository, ApplicantRepository applicantRepository) {
         this.jobPostRepository = jobPostRepository;
         this.jobProviderRepository = jobProviderRepository;
         this.jobPostMapper = new jobPostMapper(jobProviderRepository);
+        this.applicantRepository = applicantRepository;
     }
 
     @PreAuthorize("hasAuthority('JobProvider')")
@@ -106,6 +112,24 @@ public class JobPostServiceImp implements JobPostService {
         return postJobs.stream()
                 .map(jobPostMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ApplicantDto> getApplicants(int jobId) {
+         List<Applicant> applicants = applicantRepository.findAllByPostJobs_Id(jobId);
+            return applicants.stream()
+                    .map(ApplicantMapper::mapToApplicantDto)
+                    .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<ApplicantDto> getApplicantsByIds(List<Long> ids) {
+        List<Applicant> applicants = applicantRepository.findAllById(ids);
+        return applicants.stream()
+                .map(ApplicantMapper::mapToApplicantDto)
+                .collect(Collectors.toList());
+
     }
 
 

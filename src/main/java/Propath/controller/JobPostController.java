@@ -1,5 +1,6 @@
 package Propath.controller;
 
+import Propath.dto.ApplicantDto;
 import Propath.dto.PostJobDto;
 import Propath.service.JobPostService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,6 +58,18 @@ public class JobPostController {
     public ResponseEntity<List<PostJobDto>> getPostedJobs(@RequestParam int userId) {
         List<PostJobDto> postedJobs = jobPostService.getPostedJobs(userId);
         return new ResponseEntity<>(postedJobs, HttpStatus.OK);
+    }
+
+    @GetMapping("myjobs/{jobId}/applications")
+    public ResponseEntity <List<ApplicantDto>> getApplicants(@PathVariable("jobId") int jobId){
+        List<ApplicantDto> applicants = jobPostService.getApplicants(jobId);
+        return new ResponseEntity<>(applicants,HttpStatus.OK);
+    }
+
+    @PostMapping("/applicants/details")
+    public ResponseEntity<List<ApplicantDto>> getApplicantDetails(@RequestBody List<Long> ids) {
+        List<ApplicantDto> applicants = jobPostService.getApplicantsByIds(ids);
+        return ResponseEntity.ok(applicants);
     }
 
 
