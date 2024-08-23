@@ -1,7 +1,6 @@
 package Propath.service;
 
 import Propath.dto.CompanyDto;
-import Propath.dto.PostJobDto;
 import Propath.model.Company;
 
 import java.util.List;

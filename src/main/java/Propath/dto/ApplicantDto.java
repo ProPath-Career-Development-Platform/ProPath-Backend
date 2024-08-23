@@ -1,6 +1,8 @@
 package Propath.dto;
 
 
+import Propath.model.Job;
+import Propath.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,13 +17,15 @@ import java.util.Date;
 @NoArgsConstructor
 public class ApplicantDto {
 
-    private Long applicantId;
-    private String applicantName;
-    private String email;
-    private int ATS_Score;
+    private Long id;
+    private int atsScore;
     private LocalDate appliedDate;
-    private String expLevel;
-    private int jobId;
-    private int jobSeekerId;
+    private String status;
+    private String email;
+    private String exp;
+    private String name;
+    private int seekerId;
+    private Job job;
+    private User user;
 
 }

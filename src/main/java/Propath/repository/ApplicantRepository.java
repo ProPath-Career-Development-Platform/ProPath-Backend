@@ -7,6 +7,11 @@ import java.util.List;
 
 public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
 
-    List<Applicant> findAllByPostJobs_Id(int jobId);
 
+    List<Applicant> findAllByUserIdIn(List<Integer> userIds);
+
+
+    List<Applicant> findByJobIdAndStatusIn(Long jobId, List<String> statuses);
+
+    Applicant findByUserIdAndJobId(Integer jobseekerId, Long jobId);
 }

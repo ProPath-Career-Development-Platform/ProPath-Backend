@@ -28,22 +28,31 @@ public class Applicant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long applicantId;
-
-    private String email;
-    private String applicantName;
-    private Integer ATS_Score;
-    private String expLevel;
-
+    private Long id;
+    private Integer atsScore;
     @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate appliedDate;
 
-    @ManyToOne
-    @JoinColumn(name = "job_id")
-    private PostJobs postJobs;
+    private String status;
+
+    @Transient
+    private String email;
+
+    @Transient
+    private String exp;
+
+    @Transient
+    private String name;
+
+    @Transient
+    private int seekerId;
 
     @ManyToOne
-    @JoinColumn(name="jobSeeker_id")
+    @JoinColumn(name = "job_id", referencedColumnName = "id")
+    private Job job;
+
+    @ManyToOne
+    @JoinColumn(name="jobSeeker_id", referencedColumnName = "id")
     private User user;
 
 
