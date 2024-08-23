@@ -1,5 +1,7 @@
 package Propath.dto;
 
+import Propath.model.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +14,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostJobDto {
-    private int id;
-    private int jobProviderId;
-    private String companyName;
+public class JobDto {
+    private Long id;
     private String jobTitle;
     private List<String> tags;
     private String jobRole;
@@ -25,12 +25,13 @@ public class PostJobDto {
     private String education;
     private String experience;
     private String jobType;
-    private String jobLocation;
     private int vacancies;
     private String expiryDate;
     private String jobLevel;
     private String jobDescription;
-    private List<CustomQuestionDto> customQuestions;
-    private String image;
-    private LocalDate postedIn;
+    private String customizedForm;
+    private String postedIn;
+    private Boolean delete;
+    private String status;
+    private User user;
 }
