@@ -122,27 +122,32 @@ public class ApplicantServiceImp implements ApplicantService {
 
         Optional<User> user = userRepository.findById(jobseekerId);
 
-        if(user.isEmpty()){
-            throw new RuntimeException("User not found");
-        }
+        try{
 
-        Optional<Job> job = jobRepository.findById(jobId);
+            if(user.isEmpty()){
+                throw new RuntimeException("User not found");
+            }
 
-        if(job.isEmpty()){
-            throw new RuntimeException("Job not found");
-        }
+            Optional<Job> job = jobRepository.findById(jobId);
+
+            if(job.isEmpty()){
+                throw new RuntimeException("Job not found");
+            }
 
 
-        Applicant applicant = applicantRepository.findByUserIdAndJobId(jobseekerId,jobId);
+            Applicant applicant = applicantRepository.findByUserIdAndJobId(jobseekerId, jobId)
+                    .orElseThrow(() -> new RuntimeException("Application not found for userId: " + jobseekerId + " and jobId: " + jobId));
 
-        if (applicant != null) {
+
+
             applicant.setStatus("pending"); // or the status you want to set
-            applicantRepository.save(applicant);
-            return true;
+                applicantRepository.save(applicant);
+                return true;
+
+
+        }catch (RuntimeException e){
+            return false;
         }
-
-        return true;
-
 
     }
 }

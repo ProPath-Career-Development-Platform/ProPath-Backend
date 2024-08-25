@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,7 @@ public class JobProviderController {
                     event.setUser(null); // Assuming there's a setUser method to set the user details
                     return event;
                 })
+                .sorted(Comparator.comparing(JobDto::getId))
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(transformedJobs,HttpStatus.OK);
@@ -125,10 +127,23 @@ public class JobProviderController {
         job.setUser(null);
 
         return new ResponseEntity<>(job,HttpStatus.OK);
+    }
 
+    @PutMapping("/job/status/expire/{id}")
+    public ResponseEntity<String> updateJobStautsToExpire(@PathVariable("id") Long id){
+
+        Boolean result = jobService.setExpireJob(id);
+
+        if (result) {
+            return ResponseEntity.ok("Status updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to update status");
+        }
 
 
     }
+
 
 
 

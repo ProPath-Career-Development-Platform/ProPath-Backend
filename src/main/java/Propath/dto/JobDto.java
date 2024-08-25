@@ -33,5 +33,6 @@ public class JobDto {
     private String postedIn;
     private Boolean delete;
     private String status;
+    private Integer applicantCount;
     private User user;
 }

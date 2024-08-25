@@ -70,6 +70,9 @@ public class Job {
     @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'active'")
     private String status;
 
+    @Transient
+    private  Integer applicantCount;
+
 
     @ManyToOne
     @JoinColumn(name = "providerID", referencedColumnName = "id", nullable = false)
