@@ -16,9 +16,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @AllArgsConstructor
 @Service
@@ -68,7 +71,21 @@ public class JobServiceImp implements JobService {
         List<Job> jobs = jobRepository.findByUserIdAndDeleteFalse(user.getId());
 
         return jobs.stream()
-                .map(JobMapper::maptoJobDto)
+                .map(job-> {
+
+                    JobDto dto = JobMapper.maptoJobDto(job);
+
+                    //getApplicant count
+                    List<String> statuses = Arrays.asList("pending", "preSelected","selected");
+                    List<Applicant> applicant = applicantRepository.findByJobIdAndStatusIn(dto.getId(),statuses);
+
+                    dto.setApplicantCount((Integer) applicant.size());
+                    return dto;
+
+
+
+
+                })
                 .collect(Collectors.toList());
     }
 
@@ -92,6 +109,46 @@ public class JobServiceImp implements JobService {
         }
 
         return JobMapper.maptoJobDto(job);
+    }
+
+    @Override
+    public Boolean setExpireJob(Long id){
+
+       try { // Get the currently authenticated user
+           Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+           String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+           // Find the user by email
+           User user = userRepository.findByEmail(userEmail)
+                   .orElseThrow(() -> new RuntimeException("User not found"));
+
+           Job job = jobRepository.findByIdAndDeleteFalse(id)
+                   .orElseThrow(() -> new RuntimeException("Job not found"));
+
+           // Check if the event belongs to the currently authenticated user
+           if (job.getUser().getId() != (user.getId())) {
+               throw new RuntimeException("Unauthorized request: user does not own this job.");
+           }
+
+           job.setStatus("expire");
+
+           LocalDate today = LocalDate.now();
+           DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+           String formattedDate = today.format(formatter);
+
+
+           job.setExpiryDate(formattedDate);
+
+           jobRepository.save(job);
+
+           return true;
+       } catch (RuntimeException e){
+           return false;
+       }
+
+
+
+
     }
 
 

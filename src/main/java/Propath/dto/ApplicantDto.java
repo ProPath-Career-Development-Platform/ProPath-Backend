@@ -21,6 +21,7 @@ public class ApplicantDto {
     private int atsScore;
     private LocalDate appliedDate;
     private String status;
+    private String response;
     private String email;
     private String exp;
     private String name;

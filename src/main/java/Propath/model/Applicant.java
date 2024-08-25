@@ -35,6 +35,9 @@ public class Applicant {
 
     private String status;
 
+    @Column(columnDefinition = "TEXT" , nullable = true)
+    private String response;
+
     @Transient
     private String email;
 
