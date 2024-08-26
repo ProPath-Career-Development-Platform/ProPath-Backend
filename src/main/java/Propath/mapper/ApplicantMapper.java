@@ -2,47 +2,50 @@ package Propath.mapper;
 
 import Propath.dto.ApplicantDto;
 import Propath.model.Applicant;
-import Propath.model.PostJobs;
-import Propath.model.User;
-import Propath.repository.JobPostRepository;
-import Propath.repository.UserRepository;
+import Propath.repository.ApplicantRepository;
 
 public class ApplicantMapper {
 
-    private final JobPostRepository jobpostRepository;
-    private final UserRepository userRepository;
 
-    public ApplicantMapper(JobPostRepository jobpostRepository, UserRepository userRepository) {
-        this.jobpostRepository = jobpostRepository;
-        this.userRepository = userRepository;
+    private final ApplicantRepository applicantRepository;
+
+    public ApplicantMapper(ApplicantRepository applicantRepository) {
+        this.applicantRepository = applicantRepository;
     }
 
     public static ApplicantDto mapToApplicantDto(Applicant applicant) {
         return new ApplicantDto(
-                applicant.getApplicantId(),
-                applicant.getApplicantName(),
-                applicant.getEmail(),
-                applicant.getATS_Score(),
+                applicant.getId(),
+                applicant.getAtsScore(),
                 applicant.getAppliedDate(),
-                applicant.getExpLevel(),
-                applicant.getPostJobs().getId(),
-                applicant.getUser().getId()
+                applicant.getStatus(),
+                applicant.getResponse(),
+                applicant.getEmail(),
+                applicant.getExp(),
+                applicant.getName(),
+                applicant.getSeekerId(),
+                applicant.getJob(),
+                applicant.getUser()
+
         );
     }
 
-    public static Applicant mapToApplicant(ApplicantDto applicantDto, JobPostRepository jobpostRepository, UserRepository userRepository) {
-        PostJobs postJobs = jobpostRepository.findById((Integer) applicantDto.getJobId()).orElse(null);
-        User user = userRepository.findById((Integer) applicantDto.getJobSeekerId()).orElse(null);
+    public static Applicant mapToApplicant(ApplicantDto applicantDto) {
+
 
         return new Applicant(
-                applicantDto.getApplicantId(),
-                applicantDto.getEmail(),
-                applicantDto.getApplicantName(),
-                applicantDto.getATS_Score(),
-                applicantDto.getExpLevel(),
+                applicantDto.getId(),
+                applicantDto.getAtsScore(),
                 applicantDto.getAppliedDate(),
-                postJobs,
-                user
+                applicantDto.getStatus(),
+                applicantDto.getResponse(),
+                applicantDto.getEmail(),
+                applicantDto.getExp(),
+                applicantDto.getName(),
+                applicantDto.getSeekerId(),
+                applicantDto.getJob(),
+                applicantDto.getUser()
+
         );
     }
 

@@ -4,9 +4,15 @@ import Propath.model.Applicant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
 
-    List<Applicant> findAllByPostJobs_Id(int jobId);
 
+    List<Applicant> findAllByUserIdIn(List<Integer> userIds);
+
+
+    List<Applicant> findByJobIdAndStatusIn(Long jobId, List<String> statuses);
+
+    Optional<Applicant> findByUserIdAndJobId(Integer jobseekerId, Long jobId);
 }
