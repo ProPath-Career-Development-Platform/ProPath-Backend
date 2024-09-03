@@ -31,7 +31,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         req -> req.requestMatchers("/login/**", "/signup/**","/all-jobs/**").permitAll()
-                                .requestMatchers("/admin/**").hasAuthority("Admin")
+                                .requestMatchers("/admin/**").permitAll()
 
                                 .requestMatchers("/jobseeker/**").hasAuthority("JobSeeker")
                                 .requestMatchers("/jobprovider/**").hasAuthority("JobProvider")
