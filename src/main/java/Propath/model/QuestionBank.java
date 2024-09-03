@@ -2,23 +2,23 @@ package Propath.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "custom_questions")
-public class CustomQuestions {
+@Table(name = "questionBank")
+public class QuestionBank {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "question_text")
-    private String questionText;
+    private String question;
 
-    @ManyToOne
-    @JoinColumn(name = "post_job_id")
-    private PostJobs postJobs;
+
 }
