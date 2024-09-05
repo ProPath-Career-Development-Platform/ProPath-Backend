@@ -2,13 +2,12 @@ package Propath.repository;
 
 import Propath.model.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company,Long> {
-    Company findByUserId(Long userId);
+    Optional<Company> findByUserIdAndStatus(int user_id,String text);
 
-    @Query("SELECT c FROM Company c ORDER BY c.id DESC")
-    List<Company> findAllOrderByIdDesc();
+
+
 }

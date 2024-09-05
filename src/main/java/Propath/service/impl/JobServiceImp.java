@@ -151,5 +151,46 @@ public class JobServiceImp implements JobService {
 
     }
 
+    @Override
+    public JobDto updateJob(Long jobId, JobDto jobDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Job job = jobRepository.findByIdAndDeleteFalse(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+
+        // Check if the job belongs to the currently authenticated user
+        if (job.getUser().getId() != (user.getId())) {
+            throw new RuntimeException("Unauthorized request: user does not own this job.");
+        }
+
+        // Update the existing job with new values from jobDto
+        job.setJobTitle(jobDto.getJobTitle());
+        job.setTags(jobDto.getTags());
+        job.setJobRole(jobDto.getJobRole());
+        job.setMinSalary(jobDto.getMinSalary());
+        job.setMaxSalary(jobDto.getMaxSalary());
+        job.setSalaryType(jobDto.getSalaryType());
+        job.setEducation(jobDto.getEducation());
+        job.setExperience(jobDto.getExperience());
+        job.setJobType(jobDto.getJobType());
+        job.setVacancies(jobDto.getVacancies());
+        job.setExpiryDate(jobDto.getExpiryDate()); // Fixed typo
+        job.setJobLevel(jobDto.getJobLevel());
+        job.setJobDescription(jobDto.getJobDescription());
+        job.setCustomizedForm(jobDto.getCustomizedForm()); // Fixed typo
+
+        // Save the updated job
+        Job updatedJob = jobRepository.save(job);
+
+        // Optionally, convert updatedJob to JobDto and return it
+        return JobMapper.maptoJobDto(updatedJob);
+    }
+
 
 }

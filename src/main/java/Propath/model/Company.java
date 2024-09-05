@@ -25,12 +25,19 @@ public class Company {
     private String bannerImg;
     private String organizationType;
     private String industryType;
-    private Date establishedDate;
+    private String establishedDate;
     private String companyWebsite;
     private String companyVision;
     private String location;
     private String contactNumber;
     private String email;
+    @Transient
+    private String pwd;
+    @Transient
+    private String newPwd;
+
+    @Transient
+    private Boolean isNew;
 
     @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'pending'")
     private String status = "pending";
