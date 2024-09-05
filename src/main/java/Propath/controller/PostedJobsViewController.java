@@ -24,7 +24,9 @@ public class PostedJobsViewController {
 
     @GetMapping("jobDetails/{id}")
     public ResponseEntity<JobDto> getPostJobById(@PathVariable("id") Long postId) {
+        System.out.println("Received job ID: " + postId);
         JobDto postJobDto = jobPostService.getPostJobById(postId);
         return new ResponseEntity<>(postJobDto, HttpStatus.OK);
     }
+
 }

@@ -34,5 +34,8 @@ public class JobDto {
     private Boolean delete;
     private String status;
     private Integer applicantCount;
+    private String location;
+    private String companyName;
+    private String bannerImg;
     private User user;
 }

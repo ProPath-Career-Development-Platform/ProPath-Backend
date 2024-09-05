@@ -7,9 +7,11 @@ import Propath.exception.ResourceNotFoundException;
 import Propath.mapper.ApplicantMapper;
 import Propath.mapper.JobMapper;
 import Propath.model.Applicant;
+import Propath.model.Company;
 import Propath.model.Job;
 import Propath.model.User;
 import Propath.repository.ApplicantRepository;
+import Propath.repository.CompanyRepository;
 import Propath.repository.JobRepository;
 import Propath.repository.UserRepository;
 import Propath.service.JobService;
@@ -33,6 +35,7 @@ public class JobServiceImp implements JobService {
     private UserRepository userRepository;
     private ApplicantRepository applicantRepository;
     private JobMapper JobMapper;
+    private CompanyRepository companyRepository;
 
     @Override
     public JobDto saveJob(JobDto jobDto){
@@ -206,9 +209,13 @@ public class JobServiceImp implements JobService {
     public List<JobDto> getAllPostJobs() {
         List<Job> postedJobs = jobRepository.findAll();
         return postedJobs.stream()
-                .map(JobMapper::maptoJobDto)
+                .map(job -> {
+                    JobDto dto = JobMapper.maptoJobDto(job);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
 
 
 
