@@ -144,6 +144,17 @@ public class JobProviderController {
 
     }
 
+    @PutMapping("/job/update/{id}")
+    public ResponseEntity<JobDto> updateJob(@PathVariable("id") Long id, @RequestBody JobDto jobDto){
+
+       JobDto updateJob = jobService.updateJob(id,jobDto);
+
+       return new ResponseEntity<>(updateJob,HttpStatus.OK);
+
+
+        
+    }
+
 
 
 

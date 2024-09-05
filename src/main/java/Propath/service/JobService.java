@@ -15,4 +15,6 @@ public interface JobService {
     JobDto getJobById(Long id);
 
     Boolean setExpireJob(Long id);
+
+    JobDto updateJob(Long id,JobDto jobDto);
 }
