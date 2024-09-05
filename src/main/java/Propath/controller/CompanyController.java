@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/jobprovider")
@@ -16,6 +18,7 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
+
     //Create RegisterCompany REST API
     @PostMapping("/Setup")
     public ResponseEntity<CompanyDto> RegisterCompany(@RequestBody CompanyDto companyDto) {
@@ -23,11 +26,7 @@ public class CompanyController {
         return new ResponseEntity<>(newCompany, HttpStatus.CREATED);
     }
 
-    @GetMapping("/home")
-    public ResponseEntity<CompanyDto> getCompanyByUserId(@RequestParam Long userId) {
-        CompanyDto company = companyService.getCompanyByUserId(userId);
-        return ResponseEntity.ok(company);
-    }
+
 
 
 }

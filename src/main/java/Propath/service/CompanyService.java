@@ -14,5 +14,8 @@ public interface CompanyService {
 
     CompanyDto updateCompanyStatus(Long id,CompanyDto updatedCompany);
 
-    CompanyDto getCompanyByUserId(Long userId);
+    CompanyDto getCompanyByUserId(int userId);
+
+
+
 }

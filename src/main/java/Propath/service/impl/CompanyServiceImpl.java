@@ -50,8 +50,10 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDto getCompanyByUserId(Long userId) {
-        Company company = companyRepository.findByUserId(userId);
+    public CompanyDto getCompanyByUserId(int userId) {
+        Company company = companyRepository.findByUserId((long) userId);
         return CompanyMapper.maptoCompanyDto(company);
     }
+
+
 }
