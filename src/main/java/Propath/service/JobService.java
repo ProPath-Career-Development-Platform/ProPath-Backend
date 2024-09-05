@@ -2,6 +2,7 @@ package Propath.service;
 
 import Propath.dto.ApplicantDto;
 import Propath.dto.JobDto;
+import Propath.dto.PostJobDto;
 
 import java.util.List;
 
@@ -17,4 +18,8 @@ public interface JobService {
     Boolean setExpireJob(Long id);
 
     JobDto updateJob(Long id,JobDto jobDto);
+
+    JobDto getPostJobById(Long postId);
+
+    List<JobDto> getAllPostJobs();
 }

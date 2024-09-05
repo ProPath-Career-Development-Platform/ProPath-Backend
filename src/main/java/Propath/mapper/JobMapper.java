@@ -5,9 +5,10 @@ import Propath.model.Job;
 import Propath.model.JobProvider;
 import Propath.repository.JobProviderRepository;
 import Propath.repository.JobRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
-
+@Component
 public class JobMapper {
 
      private final JobRepository jobRepository;
@@ -16,7 +17,7 @@ public class JobMapper {
          this.jobRepository = jobRepository;
      }
 
-     public static JobDto maptoJobDto (Job job){
+     public JobDto maptoJobDto(Job job){
          return new JobDto(
 
                  job.getId(),

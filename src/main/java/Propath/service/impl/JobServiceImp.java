@@ -2,6 +2,8 @@ package Propath.service.impl;
 
 import Propath.dto.ApplicantDto;
 import Propath.dto.JobDto;
+import Propath.dto.PostJobDto;
+import Propath.exception.ResourceNotFoundException;
 import Propath.mapper.ApplicantMapper;
 import Propath.mapper.JobMapper;
 import Propath.model.Applicant;
@@ -30,6 +32,7 @@ public class JobServiceImp implements JobService {
     private JobRepository jobRepository;
     private UserRepository userRepository;
     private ApplicantRepository applicantRepository;
+    private JobMapper JobMapper;
 
     @Override
     public JobDto saveJob(JobDto jobDto){
@@ -191,6 +194,22 @@ public class JobServiceImp implements JobService {
         // Optionally, convert updatedJob to JobDto and return it
         return JobMapper.maptoJobDto(updatedJob);
     }
+
+    @Override
+    public JobDto getPostJobById(Long postId) {
+        Job job = jobRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
+       return JobMapper.maptoJobDto(job);
+    }
+
+    @Override
+    public List<JobDto> getAllPostJobs() {
+        List<Job> postedJobs = jobRepository.findAll();
+        return postedJobs.stream()
+                .map(JobMapper::maptoJobDto)
+                .collect(Collectors.toList());
+    }
+
 
 
 }
