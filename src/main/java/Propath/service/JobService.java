@@ -6,7 +6,10 @@ import Propath.dto.JobDto;
 import java.util.List;
 
 public interface JobService {
-    
+
+
+
+
     JobDto saveJob(JobDto jobDto);
 
     List<JobDto> getJobs();
@@ -16,5 +19,9 @@ public interface JobService {
 
     Boolean setExpireJob(Long id);
 
+<<<<<<< Updated upstream
     JobDto updateJob(Long id,JobDto jobDto);
+=======
+    List<Integer> findJobIdsByProviderId(int userId);
+>>>>>>> Stashed changes
 }

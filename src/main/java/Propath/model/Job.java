@@ -74,6 +74,7 @@ public class Job {
     private  Integer applicantCount;
 
 
+
     @ManyToOne
     @JoinColumn(name = "providerID", referencedColumnName = "id", nullable = false)
     private User user;

@@ -15,4 +15,8 @@ public interface ApplicantService {
     ApplicantDto saveApplication(ApplicantDto applicantDto);
 
     Boolean updateStatusToPending(Integer seekerId, Long jobId);
+
+    Boolean updateStatusToPreSelected(List<Integer> ids, Long jobId);
+
+    Boolean updateStatusToSelected(List<Integer> ids, Long jobId);
 }
