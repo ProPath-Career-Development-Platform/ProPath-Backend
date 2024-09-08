@@ -14,8 +14,18 @@ public interface CompanyService {
 
     CompanyDto updateCompanyStatus(Long id,CompanyDto updatedCompany);
 
-    CompanyDto getCompanyByUserId(int userId);
+ //   CompanyDto getCompanyByUserId(int userId);
 
 
+    Boolean UpdateCompanyInfo(CompanyDto companyDto);
 
+    CompanyDto getCompanyDetails();
+
+    Boolean UpdateFoundingInfo(CompanyDto companyDto);
+
+    Boolean UpdateContactInfo(CompanyDto companyDto);
+
+    Boolean UpdateUserPassword(CompanyDto companyDto);
+
+    Boolean DeleteCompany();
 }

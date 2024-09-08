@@ -51,4 +51,30 @@ public class ApplicationController {
         }
 
     }
+
+    @PutMapping("applicant/updateStatusPreSelected/{jobId}")
+    public ResponseEntity<String> UpdateStatusPreSelected(@PathVariable Long jobId ,@RequestBody List<Integer> ids){
+
+        Boolean UpdatePreSelected = applicantService.updateStatusToPreSelected(ids,jobId);
+
+        if(UpdatePreSelected){
+            return ResponseEntity.ok("Status Update Successfully");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update status");
+        }
+    }
+
+    @PutMapping("applicant/updateStatusSelected/{jobId}")
+    public ResponseEntity<String> updateStatusSelected(@PathVariable Long jobId ,@RequestBody List<Integer> ids){
+
+        Boolean UpdatePreSelected = applicantService.updateStatusToSelected(ids,jobId);
+
+        if(UpdatePreSelected){
+            return ResponseEntity.ok("Status Update Successfully");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update status");
+        }
+    }
 }

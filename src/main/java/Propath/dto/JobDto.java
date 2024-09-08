@@ -1,5 +1,6 @@
 package Propath.dto;
 
+import Propath.model.Company;
 import Propath.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,4 +36,5 @@ public class JobDto {
     private String status;
     private Integer applicantCount;
     private User user;
+    private Company company;
 }

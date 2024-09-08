@@ -150,4 +150,71 @@ public class ApplicantServiceImp implements ApplicantService {
         }
 
     }
+
+    @Override
+    public Boolean updateStatusToPreSelected(List<Integer> ids, Long jobId) {
+        try {
+
+            Optional<Job> job = jobRepository.findById(jobId);
+            if (job.isEmpty()) {
+                throw new RuntimeException("Job not found");
+            }
+
+            for (Integer id : ids) {
+
+                Optional<User> user = userRepository.findById(id);
+                if (user.isEmpty()) {
+                    throw new RuntimeException("User with ID " + id + " not found");
+                }
+
+
+                Applicant applicant = applicantRepository.findByUserIdAndJobId(id, jobId)
+                        .orElseThrow(() -> new RuntimeException("Application not found for userId: " + id + " and jobId: " + jobId));
+
+
+                applicant.setStatus("preSelected");
+                applicantRepository.save(applicant);
+            }
+            return true;
+
+        } catch (RuntimeException e) {
+            // Log the exception
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean updateStatusToSelected(List<Integer> ids, Long jobId) {
+
+        try {
+
+            Optional<Job> job = jobRepository.findById(jobId);
+            if (job.isEmpty()) {
+                throw new RuntimeException("Job not found");
+            }
+
+            for (Integer id : ids) {
+
+                Optional<User> user = userRepository.findById(id);
+                if (user.isEmpty()) {
+                    throw new RuntimeException("User with ID " + id + " not found");
+                }
+
+
+                Applicant applicant = applicantRepository.findByUserIdAndJobId(id, jobId)
+                        .orElseThrow(() -> new RuntimeException("Application not found for userId: " + id + " and jobId: " + jobId));
+
+
+                applicant.setStatus("Selected");
+                applicantRepository.save(applicant);
+            }
+            return true;
+
+        } catch (RuntimeException e) {
+            // Log the exception
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

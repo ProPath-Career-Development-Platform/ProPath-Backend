@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CompanyMapper {
 
-    private static UserRepository userRepository;
+    //private static UserRepository userRepository;
 
-    public CompanyMapper(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+   // public CompanyMapper(UserRepository userRepository) {
+       // this.userRepository = userRepository;
+    //}
 
     public static CompanyDto maptoCompanyDto(Company company) {
           return new CompanyDto(
@@ -31,14 +31,17 @@ public class CompanyMapper {
                   company.getLocation(),
                   company.getContactNumber(),
                   company.getEmail(),
+                  company.getPwd(),
+                  company.getNewPwd(),
+                  company.getIsNew(),
                   company.getStatus(),
-                  company.getUser().getId()
+                  company.getUser()
 
           );
     }
 
     public static Company maptoCompany(CompanyDto companyDto) {
-        User user = userRepository.findById(companyDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        //User user = userRepository.findById(companyDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         return new Company(
                 companyDto.getId(),
                 companyDto.getCompanyName(),
@@ -53,8 +56,11 @@ public class CompanyMapper {
                 companyDto.getLocation(),
                 companyDto.getContactNumber(),
                 companyDto.getEmail(),
+                companyDto.getPwd(),
+                companyDto.getNewPwd(),
+                companyDto.getIsNew(),
                 companyDto.getStatus(),
-                user
+                companyDto.getUser()
         );
     }
 }
