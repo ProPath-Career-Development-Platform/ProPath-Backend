@@ -204,5 +204,19 @@ public class JobServiceImp implements JobService {
 
     }
 
+    @Override
+    public JobDto getJobByIdJs(Long id) {
+
+        Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job Not Found"));
+        return JobMapper.maptoJobDto(job);
+    }
+    @Override
+    public List<JobDto> getAllJobs() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();  // Get the username of the logged-in user
+        List<Job> jobs =  jobRepository.findAll();
+        return jobs.stream().map((job) -> JobMapper.maptoJobDto(job)).collect(Collectors.toList());
+    }
+
 
 }

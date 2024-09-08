@@ -24,4 +24,9 @@ public interface JobService {
 
     List<Integer> findJobIdsByProviderId(int userId);
 
+    public JobDto getJobByIdJs(Long id);
+
+    List<JobDto> getAllJobs();
+
+
 }
