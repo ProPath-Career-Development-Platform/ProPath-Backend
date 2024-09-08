@@ -1,6 +1,7 @@
 package Propath.dto;
 
 
+import Propath.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +22,15 @@ public class CompanyDto {
     private String bannerImg;
     private String organizationType;
     private String industryType;
-    private Date establishedDate;
+    private String establishedDate;
     private String companyWebsite;
     private String companyVision;
     private String location;
     private String contactNumber;
     private String email;
+    private String pwd;
+    private String newPwd;
+    private Boolean isNew;
     private String status;
-    private int userId;
+    private User user;
 }
