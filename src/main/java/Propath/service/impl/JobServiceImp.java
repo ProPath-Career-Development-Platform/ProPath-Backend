@@ -152,7 +152,7 @@ public class JobServiceImp implements JobService {
     }
 
     @Override
-<<<<<<< Updated upstream
+
     public JobDto updateJob(Long jobId, JobDto jobDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Assuming you store the email in the principal
@@ -191,7 +191,9 @@ public class JobServiceImp implements JobService {
 
         // Optionally, convert updatedJob to JobDto and return it
         return JobMapper.maptoJobDto(updatedJob);
-=======
+
+    }
+
     public List<Integer> findJobIdsByProviderId(int providerId){
 
         User user = userRepository.findById(providerId)
@@ -199,7 +201,7 @@ public class JobServiceImp implements JobService {
 
         return jobRepository.findJobIdsByProviderId(providerId);
 
->>>>>>> Stashed changes
+
     }
 
 
