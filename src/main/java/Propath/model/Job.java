@@ -80,8 +80,7 @@ public class Job {
     private User user;
 
 
-    @ManyToOne
-    @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
+    @Transient
     private Company company;
 
 

@@ -4,10 +4,9 @@ import Propath.dto.ApplicantDto;
 import Propath.dto.JobDto;
 import Propath.mapper.ApplicantMapper;
 import Propath.mapper.JobMapper;
-import Propath.model.Applicant;
-import Propath.model.Job;
-import Propath.model.User;
+import Propath.model.*;
 import Propath.repository.ApplicantRepository;
+import Propath.repository.CompanyRepository;
 import Propath.repository.JobRepository;
 import Propath.repository.UserRepository;
 import Propath.service.JobService;
@@ -30,6 +29,7 @@ public class JobServiceImp implements JobService {
     private JobRepository jobRepository;
     private UserRepository userRepository;
     private ApplicantRepository applicantRepository;
+    private CompanyRepository companyRepository;
 
     @Override
     public JobDto saveJob(JobDto jobDto){
@@ -208,14 +208,27 @@ public class JobServiceImp implements JobService {
     public JobDto getJobByIdJs(Long id) {
 
         Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job Not Found"));
-        return JobMapper.maptoJobDto(job);
+        JobDto jobDto = JobMapper.maptoJobDto(job);
+        Company company = companyRepository.findByUser(job.getUser()).orElseThrow(()-> new RuntimeException("No Company Found"));
+        jobDto.setCompany(company);
+        return jobDto;
     }
     @Override
     public List<JobDto> getAllJobs() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();  // Get the username of the logged-in user
+        String userEmail = authentication.getName();
         List<Job> jobs =  jobRepository.findAll();
-        return jobs.stream().map((job) -> JobMapper.maptoJobDto(job)).collect(Collectors.toList());
+
+        return jobs.stream().map((job)-> {
+
+
+            Company company = companyRepository.findByUser(job.getUser()).orElseThrow(()->new RuntimeException("Company Id not found"));
+            JobDto jobDto = JobMapper.maptoJobDto(job);
+
+            jobDto.setCompany(company);
+            return jobDto;
+        }).collect(Collectors.toList());
     }
 
 
