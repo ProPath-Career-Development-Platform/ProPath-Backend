@@ -218,6 +218,7 @@ public class JobServiceImp implements JobService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
+
         List<Job> jobs =  jobRepository.findAll();
 
         return jobs.stream().map((job)-> {

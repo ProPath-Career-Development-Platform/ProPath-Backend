@@ -92,6 +92,9 @@ public class User implements UserDetails{
         this.role = role;
     }
 
+    public void setUsername(String username){
+        this.username=username;
+    }
     @Column(name = "password")
     private String password;
 
