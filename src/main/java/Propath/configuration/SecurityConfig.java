@@ -30,8 +30,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req -> req.requestMatchers("/login/**", "/signup/**").permitAll()
+                        req -> req.requestMatchers("/login/**", "/signup/**","/all-jobs/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("Admin")
+
                                 .requestMatchers("/jobseeker/**").hasAuthority("JobSeeker")
                                 .requestMatchers("/jobprovider/**").hasAuthority("JobProvider")
                                 .anyRequest().authenticated()

@@ -3,6 +3,7 @@ package Propath.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,24 +12,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "post_jobs")
-public class PostJobs {
+@Table(name="Job")
+public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private JobProvider jobProvider;
+    private Long id;
 
     @Column(name = "job_title")
     private String jobTitle;
 
-    @Column(name = "Tags")
-    private String tags;
+    @Column(name = "tags")
+    private List<String> tags;
 
-    @Column(name = "job_role")
+    @Column(name="jobRole")
     private String jobRole;
 
     @Column(name = "min_salary")
@@ -40,17 +37,14 @@ public class PostJobs {
     @Column(name = "salary_type")
     private String salaryType;
 
-    @Column(name = "Education")
+    @Column(name = "education")
     private String education;
 
-    @Column(name = "Experience")
+    @Column(name = "experience")
     private String experience;
 
     @Column(name = "job_type")
     private String jobType;
-
-    @Column(name = "job_location")
-    private String jobLocation;
 
     @Column(name = "vacancies")
     private int vacancies;
@@ -61,10 +55,33 @@ public class PostJobs {
     @Column(name = "job_level")
     private String jobLevel;
 
-    @Column(name = "job_description")
+    @Column(name = "job_description", columnDefinition = "TEXT")
     private String jobDescription;
 
-//    @OneToMany(mappedBy = "postJobs", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<CustomQuestions> customQuestions = new ArrayList<>();
+    @Column(name="formData",columnDefinition = "TEXT")
+    private String customizedForm;
+
+    @Column(name = "posted_in")
+    private String postedIn;
+
+    @Column(nullable = false,columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean delete;
+
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'active'")
+    private String status;
+
+    @Transient
+    private  Integer applicantCount;
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "providerID", referencedColumnName = "id", nullable = false)
+    private User user;
+
+
+    @Transient
+    private Company company;
+
 
 }
