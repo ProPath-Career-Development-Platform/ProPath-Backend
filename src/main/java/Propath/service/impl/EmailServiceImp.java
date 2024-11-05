@@ -103,7 +103,6 @@ public class EmailServiceImp implements EmailService {
 
         // Initialize MailerSend and set the API key
         MailerSend ms = new MailerSend();
-        //String apiKey = "mlsn.d359af0571e704540f3f3d99122007fd8909884298bfd235992a8ded6bb4752f";
         ms.setToken(apiKey); // Ensure apiKey is injected using @Value
 
         // Create email object and set "from" details
