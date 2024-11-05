@@ -29,6 +29,7 @@ public class JobMapper {
         String location = companyOptional.map(Company::getLocation).orElse(null); // Fetch location
         String companyName = companyOptional.map(Company::getCompanyName).orElse(null); // Fetch company name
         String bannerImg = companyOptional.map(Company::getBannerImg).orElse(null); // Fetch company banner
+        String logoImg = companyOptional.map(Company::getLogoImg).orElse(null); // Fetch company logo
         return new JobDto(
                 job.getId(),
                 job.getJobTitle(),
@@ -52,7 +53,9 @@ public class JobMapper {
                 location,
                 companyName,
                 bannerImg,
-                job.getUser()
+                logoImg,
+                job.getUser(),
+                job.getCompany()
         );
     }
 
@@ -77,7 +80,8 @@ public class JobMapper {
                 jobDto.getDelete(),
                 jobDto.getStatus(),
                 jobDto.getApplicantCount(),
-                jobDto.getUser()
+                jobDto.getUser(),
+                jobDto.getCompany()
         );
     }
 }

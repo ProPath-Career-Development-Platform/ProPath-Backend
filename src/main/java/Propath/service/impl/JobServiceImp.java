@@ -1,6 +1,7 @@
 package Propath.service.impl;
 
 import Propath.dto.ApplicantDto;
+import Propath.dto.CompanyDto;
 import Propath.dto.JobDto;
 import Propath.dto.PostJobDto;
 import Propath.exception.ResourceNotFoundException;
@@ -216,6 +217,41 @@ public class JobServiceImp implements JobService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public CompanyDto getCompanyInfoByJobId(Long jobId) {
+        // Step 1: Retrieve the job by jobId
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id " + jobId));
+
+        // Step 2: Retrieve the associated user (job provider)
+        User user = job.getUser();
+
+        // Step 3: Retrieve the company associated with the user
+        Company company = companyRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found for user with id " + user.getId()));
+
+        // Step 4: Map Company to CompanyDto and return
+        return new CompanyDto(
+                company.getId(),
+                company.getCompanyName(),
+                company.getAboutUs(),
+                company.getLogoImg(),
+                company.getBannerImg(),
+                company.getOrganizationType(),
+                company.getIndustryType(),
+                company.getEstablishedDate() != null ? company.getEstablishedDate().toString() : null,
+                company.getCompanyWebsite(),
+                company.getCompanyVision(),
+                company.getLocation(),
+                company.getContactNumber(),
+                company.getEmail(),
+                null,        // pwd, set to null for security
+                null,        // newPwd, set to null for security
+                company.getIsNew(),
+                company.getStatus(),
+                company.getUser()
+        );
+    }
 
 
 

@@ -79,4 +79,6 @@ public class Job {
     private User user;
 
 
+    @Transient
+    private Company company;
 }
