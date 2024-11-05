@@ -32,8 +32,7 @@ public class JobSeekerController {
 
     @GetMapping("getCompany")
     public List<JobDto> getAllCompanies(){
-        List<JobDto> jobs = jobService.getAllJobs();
-        return jobs;
+        return jobService.getAllJobs();
     }
 
     @GetMapping("getJobById")

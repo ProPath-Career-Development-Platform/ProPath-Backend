@@ -1,6 +1,7 @@
 package Propath.controller;
 
 import Propath.dto.InterviewDto;
+import Propath.model.JobSeeker;
 import Propath.service.InterviewService;
 import Propath.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
