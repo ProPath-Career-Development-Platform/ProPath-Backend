@@ -18,4 +18,6 @@ public class JobSeeker {
     @MapsId
     @JoinColumn(name ="id")
     private User user;
+
+
 }

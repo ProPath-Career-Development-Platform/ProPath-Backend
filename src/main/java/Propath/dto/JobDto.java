@@ -35,4 +35,5 @@ public class JobDto {
     private Integer applicantCount;
     private User user;
     private Company company;
+
 }
