@@ -2,6 +2,7 @@ package Propath.controller;
 
 import Propath.dto.CompanyDto;
 import Propath.dto.JobDto;
+import Propath.model.Job;
 import Propath.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,4 +39,14 @@ public class PostedJobsViewController {
         CompanyDto companyDto = jobPostService.getCompanyInfoByJobId(jobId);
         return new ResponseEntity<>(companyDto, HttpStatus.OK);
     }
+
+    // Get related jobs by tags REST API
+    @GetMapping("/related-jobs")
+    public ResponseEntity<List<Job>> getRelatedJobs(@RequestParam List<String> tags) {
+        String[] lowercaseTags = tags.stream().map(String::toLowerCase).toArray(String[]::new);
+        List<Job> relatedJobs = jobPostService.findRelatedJobsByTags(lowercaseTags);
+        return ResponseEntity.ok(relatedJobs);
+    }
+
+
 }

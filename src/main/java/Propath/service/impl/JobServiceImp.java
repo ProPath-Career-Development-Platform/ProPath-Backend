@@ -253,6 +253,11 @@ public class JobServiceImp implements JobService {
         );
     }
 
+    @Override
+    public List<Job> findRelatedJobsByTags(String[] tags) {
+        return jobRepository.findJobsByTags(tags);
+    }
+
 
 
 }
