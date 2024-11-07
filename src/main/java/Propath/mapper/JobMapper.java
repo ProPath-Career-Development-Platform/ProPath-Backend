@@ -38,7 +38,8 @@ public class JobMapper {
                  job.getDelete(),
                  job.getStatus(),
                  job.getApplicantCount(),
-                 job.getUser()
+                 job.getUser(),
+                 job.getCompany()
 
          );
      }
@@ -66,7 +67,9 @@ public class JobMapper {
                  jobDto.getDelete(),
                  jobDto.getStatus(),
                  jobDto.getApplicantCount(),
-                 jobDto.getUser()
+                 jobDto.getUser(),
+                 jobDto.getCompany()
+
          );
 
      }
