@@ -15,6 +15,7 @@ import com.mailersend.sdk.MailerSend;
 import com.mailersend.sdk.MailerSendResponse;
 import com.mailersend.sdk.exceptions.MailerSendException;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,12 +35,13 @@ public class EmailServiceImp implements EmailService {
     private final VerficationRepository verficationRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    @Value("${mailersend.api.key}")
     private String apiKey;
 
     //@Allargsconstruct removed bcz -> creates a constructor with parameters for each field in the class, including apiKey
     @Autowired
     public EmailServiceImp(VerficationRepository verficationRepository, UserRepository userRepository, JwtService jwtService) {
+        Dotenv dotenv = Dotenv.load();
+        this.apiKey = dotenv.get("mailersend_api_key");
         this.verficationRepository = verficationRepository;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
