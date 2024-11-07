@@ -1,9 +1,9 @@
 package Propath.controller;
 
-import Propath.dto.ApplicantDto;
-import Propath.dto.EventDto;
-import Propath.dto.JobDto;
-import Propath.dto.JobProviderDto;
+import Propath.dto.*;
+import Propath.model.AuthenticationResponse;
+import Propath.model.User;
+import Propath.service.EmailService;
 import Propath.service.EventService;
 import Propath.service.JobProviderService;
 import Propath.service.JobService;
@@ -32,6 +32,9 @@ public class JobProviderController {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private EmailService emailService;
 
 
 
@@ -154,6 +157,44 @@ public class JobProviderController {
 
         
     }
+
+    @PostMapping("/send/v-email")
+    public ResponseEntity<Boolean> sendVerification(@RequestBody VerficationTokenDto verficationTokenDto){
+
+        Boolean result = emailService.settingsEmailVerification(verficationTokenDto);
+
+        if (result) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
+    }
+
+    @PostMapping("/verify-email/{token}")
+    public ResponseEntity<?> checkVerification(@PathVariable("token") String token) {
+
+        try {
+            AuthenticationResponse result = emailService.checkVerification(token);
+            return ResponseEntity.ok(result); // Return the AuthenticationResponse with the new JWT
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Verification failed: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/update/personal/name")
+    public ResponseEntity<Boolean> updatePersonalName(@RequestBody User user) {
+
+        Boolean result = jobProviderService.updatePersonalName(user);
+
+        if (result) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
+    }
+
 
 
 
