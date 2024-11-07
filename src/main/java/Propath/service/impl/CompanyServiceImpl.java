@@ -129,7 +129,12 @@ public class CompanyServiceImpl implements CompanyService {
             company.setIsNew(true);
         }else{
              company = companyOptional.get();
-            company.setUser(null);
+            User user = company.getUser();
+            if (user != null) {
+                user.clearSensitiveDataForSettings();
+            }
+
+
             company.setIsNew(false);
 
 
