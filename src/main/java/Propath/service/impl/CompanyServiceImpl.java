@@ -32,6 +32,20 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Get the username of the logged-in user
+
+        // Find the user by email
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+
+
+        companyDto.setUser(userOptional.get());
+
         Company company = CompanyMapper.maptoCompany(companyDto);
         Company newCompany = companyRepository.save(company);
 
@@ -307,6 +321,39 @@ public class CompanyServiceImpl implements CompanyService {
         } catch (RuntimeException e) {
             return false;
         }
+
+    }
+
+    @Override
+    public String getCompanyStatus(){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Get the username of the logged-in user
+
+        // Find the user by email
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+
+
+        // Find the company by user ID
+        Optional<Company> companyOptional = companyRepository.findByUserId(userOptional.get().getId());
+
+        if(companyOptional.isEmpty()){
+            return "none";
+        }else{
+
+            if ( companyOptional.get().getStatus().equals("active")  || companyOptional.get().getStatus().equals("pending")) {
+                return companyOptional.get().getStatus();
+            }else{
+                return "error";
+            }
+
+        }
+
 
     }
 
