@@ -30,6 +30,7 @@ public class EventDto {
     private Boolean delete;
     private String status;
     private User user;
+    private int currentParticipants;
 
 
 }

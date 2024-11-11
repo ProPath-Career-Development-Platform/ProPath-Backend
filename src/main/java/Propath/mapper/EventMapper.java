@@ -29,7 +29,8 @@ public class EventMapper {
                 event.getDescription(),
                 event.getDelete(),
                 event.getStatus(),
-                event.getUser()
+                event.getUser(),
+                event.getCurrentParticipants()
 
 
 
@@ -53,7 +54,8 @@ public class EventMapper {
                 eventDto.getDescription(),
                 eventDto.getDelete(),
                 eventDto.getStatus(),
-                eventDto.getUser()
+                eventDto.getUser(),
+                eventDto.getCurrentParticipants()
 
         );
     }
