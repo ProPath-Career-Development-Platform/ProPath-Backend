@@ -11,4 +11,5 @@ public interface CompanyRepository extends JpaRepository<Company,Long> {
     Optional<Company> findByUser(Propath.model.User user);
 
 
+    Optional<Company> findByUserId(int id);
 }
