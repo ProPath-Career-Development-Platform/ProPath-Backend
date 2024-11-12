@@ -40,7 +40,7 @@ public class Company {
     private Boolean isNew;
 
     @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'pending'")
-    private String status = "pending";
+    private String status ;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

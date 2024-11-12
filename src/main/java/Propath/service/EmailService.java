@@ -1,5 +1,6 @@
 package Propath.service;
 
+import Propath.dto.JobProviderDto;
 import Propath.dto.VerficationTokenDto;
 import Propath.model.AuthenticationResponse;
 
@@ -11,4 +12,6 @@ public interface EmailService {
     String generateSecureRandomToken();
     LocalDateTime add15MinutesToCurrentTime();
     AuthenticationResponse checkVerification(String token);
+
+    void sendRegisterMailForJP(String name, String email);
 }

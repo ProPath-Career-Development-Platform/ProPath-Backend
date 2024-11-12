@@ -1,5 +1,6 @@
 package Propath.service.impl;
 
+import Propath.dto.JobProviderDto;
 import Propath.dto.VerficationTokenDto;
 import Propath.mapper.VerificationTokenMapper;
 import Propath.model.AuthenticationResponse;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.SimpleTimeZone;
 
 @Service
 public class EmailServiceImp implements EmailService {
@@ -178,6 +180,48 @@ public class EmailServiceImp implements EmailService {
             throw new RuntimeException("Invalid token");
         }
     }
+
+    @Override
+    public void sendRegisterMailForJP(String name, String userEmail){
+
+
+        //================== email part =====================
+
+
+        // Initialize MailerSend and set the API key
+        MailerSend ms = new MailerSend();
+        ms.setToken(apiKey); // Ensure apiKey is injected using @Value
+
+        // Create email object and set "from" details
+        Email email = new Email();
+        email.setFrom("ProPath", "test@trial-z86org8v3yzlew13.mlsender.net");
+
+        email.setSubject("Dont Stop Here!");
+
+        // Use the user's email for sending the verification
+        email.addRecipient(name, userEmail); // Use newEmail for recipient
+
+        // Set the template ID from your MailerSend template
+        email.setTemplateId("ynrw7gykqmn42k8e");
+
+        // Add personalized data
+        email.addPersonalization("username", name);
+        email.addPersonalization("support_email", "test@trial-z86org8v3yzlew13.mlsender.net");
+
+
+        // Send the email
+        try {
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println("Email sent successfully, Message ID: " + response.messageId);
+
+        } catch (MailerSendException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
 
 
 

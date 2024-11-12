@@ -28,4 +28,6 @@ public interface CompanyService {
     Boolean UpdateUserPassword(CompanyDto companyDto);
 
     Boolean DeleteCompany();
+
+    String getCompanyStatus();
 }
