@@ -16,12 +16,18 @@ public class JobSeekerMapper {
     public JobSeekerMapper(JobSeekerRepository jobSeekerRepository){this.jobSeekerRepository = jobSeekerRepository;}
     public static JobSeekerDto mapToJobSeekerDto(JobSeeker jobSeeker){
         return new JobSeekerDto(
+                jobSeeker.getId(),
+            jobSeeker.getProfilePicture(),
             jobSeeker.getUser()
         );
     }
 
     public static JobSeeker mapToJobSeeker(JobSeekerDto jobSeekerDto) {
-       return new JobSeeker(jobSeekerDto.getUser().getId(),jobSeekerDto.getUser());
+       return new JobSeeker(
+               jobSeekerDto.getId(),
+               jobSeekerDto.getProfilePicture(),
+               jobSeekerDto.getUser()
+       );
 
     }
 

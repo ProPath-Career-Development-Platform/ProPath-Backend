@@ -8,5 +8,5 @@ public interface JobSeekerEventService {
 
     public List<JobSeekerEventDto> getAllEvents();
 
-    public String registerEvent(int seekerId , Long eventId);
+    public String registerEvent( Long eventId);
 }
