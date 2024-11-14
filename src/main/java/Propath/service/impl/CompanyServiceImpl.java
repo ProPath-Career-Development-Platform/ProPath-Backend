@@ -59,6 +59,12 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+    public List<CompanyDto> getAllRequests() {
+        List<Company> pendingCompanies = companyRepository.findByStatus("pending");
+        return pendingCompanies.stream().map(company -> CompanyMapper.maptoCompanyDto(company)).collect(Collectors.toList());
+    }
+
+    @Override
     public CompanyDto updateCompanyStatus(Long id, CompanyDto updatedCompany) {
         Company company = companyRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Company not found with given ID"+id)
