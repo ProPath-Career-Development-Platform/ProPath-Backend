@@ -35,6 +35,10 @@ public class AdminController {
        return ResponseEntity.ok(companyDto);
     }
 
-
+    @GetMapping("/companyRequests")
+    public ResponseEntity<List<CompanyDto>> getAllRequests() {
+        List<CompanyDto> requests = companyService.getAllRequests();
+        return ResponseEntity.ok(requests);
+    }
 
 }

@@ -12,6 +12,8 @@ public interface CompanyService {
 
     List<CompanyDto> getALLCompanies();
 
+    List<CompanyDto> getAllRequests();
+
     CompanyDto updateCompanyStatus(Long id,CompanyDto updatedCompany);
 
  //   CompanyDto getCompanyByUserId(int userId);
