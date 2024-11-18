@@ -1,10 +1,15 @@
 package Propath.service.impl;
 
 import Propath.dto.EventDto;
+import Propath.dto.JobSeekerEventDto;
 import Propath.mapper.EventMapper;
+import Propath.mapper.JobSeekerEventMapper;
 import Propath.model.Event;
+import Propath.model.JobseekerEvent;
 import Propath.model.User;
 import Propath.repository.EventRepository;
+import Propath.repository.JobSeekerEventRepository;
+import Propath.repository.JobSeekerRepository;
 import Propath.repository.UserRepository;
 import Propath.service.EventService;
 import org.springframework.data.domain.Page;
@@ -27,6 +32,7 @@ public class EventServiceImp  implements EventService {
 
   private  EventRepository eventRepository;
   private UserRepository userRepository;
+  private JobSeekerEventRepository jobSeekerEventRepository;
 
 
 
@@ -145,6 +151,25 @@ public class EventServiceImp  implements EventService {
 
         // Convert Event entity to EventDto
         return EventMapper.maptoEventDto(event);
+    }
+
+    @Override
+    public List<JobSeekerEventDto> getRegisteredusers(Long id) {
+        
+        // Get the currently authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<JobseekerEvent> jobseekerEvents = jobSeekerEventRepository.findByEvent_IdAndIsAppliedTrue(id);
+        
+        
+        return jobseekerEvents.stream()
+                .map(JobSeekerEventMapper::maptoJobSeekerEventDto)
+                .collect(Collectors.toList());
     }
 
 

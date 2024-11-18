@@ -12,6 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 
 public class JobSeekerDto {
+    private int id;
+    private String profilePicture;
     private User user;
 
 }
