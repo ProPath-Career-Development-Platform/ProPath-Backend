@@ -9,25 +9,30 @@ import Propath.repository.JobSeekerEventRepository;
 import Propath.repository.JobSeekerRepository;
 import Propath.repository.UserRepository;
 import Propath.service.JobSeekerEventService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
+@AllArgsConstructor
 public class JobSeekerEventServiceImp implements JobSeekerEventService {
 
-    @Autowired
-    private JobSeekerEventRepository jobSeekerEventRepository;
-    @Autowired
-    private JobSeekerRepository jobSeekerRepository;
 
 
-    @Autowired
-    private EventRepository eventRepository;
+    private  UserRepository userRepository;
+    private  JobSeekerRepository jobSeekerRepository;
+    private  EventRepository eventRepository;
+    private  JobSeekerEventRepository jobSeekerEventRepository;
+
+
 
 
     @Override
@@ -43,11 +48,35 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
     }
 
     @Override
-    public String registerEvent(int seekerId, Long eventId) {
+    public String registerEvent(Long eventId) {
 
-        JobSeeker jobSeeker = jobSeekerRepository.findById(seekerId).orElseThrow(()-> new RuntimeException("jobSeekerNotFound"));
+        // Get the currently authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if(userOptional.isEmpty()){
+            throw new RuntimeException("user not found");
+        }
+
+        Optional<JobSeeker> jobSeeker = jobSeekerRepository.findByUser_Id(userOptional.get().getId());
+
+        if(jobSeeker.isEmpty()){
+            throw new RuntimeException("Event not found");
+        }
+
+
 
         Event event = eventRepository.findById(eventId).orElseThrow(()-> new RuntimeException("eventNotFound"));
+
+
+        //check user alredy registerd
+        Optional<JobseekerEvent> isAlreadyReg = jobSeekerEventRepository.findByEvent_IdAndJobSeeker_Id(eventId,jobSeeker.get().getId());
+
+        if(isAlreadyReg.isPresent()){
+            throw new RuntimeException("User Alredy registerd");
+        }
 
         LocalDateTime appliedDate = LocalDateTime.now();
 
@@ -75,12 +104,18 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
         }
 
 
+        JobseekerEvent jobseekerEvent = new JobseekerEvent();
+
+        jobseekerEvent.setEvent(event);
+        jobseekerEvent.setJobSeeker(jobSeeker.get());
+        jobseekerEvent.setAppliedDate(LocalDateTime.now());
+        jobseekerEvent.setIsApplied(true);
 
 
 
 
-        JobseekerEvent jobseekerEvent = new JobseekerEvent(event,jobSeeker,LocalDateTime.now(),true);
-        eventRepository.save(event);
+        //JobseekerEvent jobseekerEvent = new JobseekerEvent(event,jobSeeker,LocalDateTime.now(),true);
+        //eventRepository.save(event);
         jobSeekerEventRepository.save(jobseekerEvent);
         return "Event Registration is successful";
     }

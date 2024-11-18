@@ -2,6 +2,7 @@ package Propath.controller;
 
 import Propath.dto.*;
 import Propath.model.AuthenticationResponse;
+import Propath.model.JobseekerEvent;
 import Propath.model.User;
 import Propath.service.EmailService;
 import Propath.service.EventService;
@@ -14,8 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin("*")
@@ -192,6 +193,34 @@ public class JobProviderController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
+
+    }
+
+    @GetMapping("/event/register/{id}")
+    public ResponseEntity<List<Map<String,Object>>> getRegisterdUsersByEventId(@PathVariable("id") Long id){
+
+        List<JobSeekerEventDto> jobSeekerEventDtos = eventService.getRegisteredusers(id);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm a");
+        List<Map<String, Object>> registerUsers = new ArrayList<>();
+
+        for(JobSeekerEventDto jobSeekerEventDto : jobSeekerEventDtos){
+            Map<String, Object> registerUser = new HashMap<>();
+
+            registerUser.put("userId", jobSeekerEventDto.getJobSeeker().getUser().getId());
+            registerUser.put("userName", jobSeekerEventDto.getJobSeeker().getUser().getUsername());
+            registerUser.put("userEmail", jobSeekerEventDto.getJobSeeker().getUser().getEmail());
+            registerUser.put("profilePicture", jobSeekerEventDto.getJobSeeker().getProfilePicture());
+            registerUser.put("appliedDate", jobSeekerEventDto.getAppliedDate().format(formatter));
+            registerUser.put("IsApplied", jobSeekerEventDto.getIsApplied());
+            registerUser.put("regID", jobSeekerEventDto.getId());
+
+            registerUsers.add(registerUser);
+
+        }
+
+        registerUsers.sort(Comparator.comparing(user -> (Long) user.get("regID")));
+
+        return new ResponseEntity<>(registerUsers,HttpStatus.OK);
 
     }
 
