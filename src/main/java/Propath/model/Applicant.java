@@ -39,6 +39,8 @@ public class Applicant {
     @Column(columnDefinition = "TEXT" , nullable = true)
     private String response;
 
+    private String cv;
+
     @Transient
     private String email;
 
