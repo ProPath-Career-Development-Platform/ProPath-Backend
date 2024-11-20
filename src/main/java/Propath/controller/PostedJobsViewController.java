@@ -1,5 +1,6 @@
 package Propath.controller;
 
+import Propath.dto.CompanyAndJobsDto;
 import Propath.dto.CompanyDto;
 import Propath.dto.JobDto;
 import Propath.model.Job;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -42,11 +44,22 @@ public class PostedJobsViewController {
 
     // Get related jobs by tags REST API
     @GetMapping("/related-jobs")
-    public ResponseEntity<List<Job>> getRelatedJobs(@RequestParam List<String> tags) {
+    public ResponseEntity<List<CompanyAndJobsDto>> getRelatedJobs(@RequestParam List<String> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return ResponseEntity.badRequest().body(Collections.emptyList());
+        }
+
         String[] lowercaseTags = tags.stream().map(String::toLowerCase).toArray(String[]::new);
-        List<Job> relatedJobs = jobPostService.findRelatedJobsByTags(lowercaseTags);
-        return ResponseEntity.ok(relatedJobs);
+        try {
+            List<CompanyAndJobsDto> relatedJobs = jobPostService.findRelatedJobsWithCompanyByTags(lowercaseTags);
+            return ResponseEntity.ok(relatedJobs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+
+
 
 
 }

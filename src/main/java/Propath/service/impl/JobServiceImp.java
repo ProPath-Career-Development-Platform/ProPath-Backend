@@ -1,9 +1,6 @@
 package Propath.service.impl;
 
-import Propath.dto.ApplicantDto;
-import Propath.dto.CompanyDto;
-import Propath.dto.JobDto;
-import Propath.dto.PostJobDto;
+import Propath.dto.*;
 import Propath.exception.ResourceNotFoundException;
 import Propath.mapper.ApplicantMapper;
 import Propath.mapper.JobMapper;
@@ -21,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -252,11 +250,25 @@ public class JobServiceImp implements JobService {
                 company.getUser()
         );
     }
-
     @Override
-    public List<Job> findRelatedJobsByTags(String[] tags) {
-        return jobRepository.findJobsByTags(tags);
+    public List<CompanyAndJobsDto> findRelatedJobsWithCompanyByTags(String[] tags) {
+        List<Object[]> results = jobRepository.findJobsWithCompanyByTags(tags);
+        List<CompanyAndJobsDto> relatedJobsWithCompanies = new ArrayList<>();
+
+        for (Object[] row : results) {
+            Job job = (Job) row[0];
+            Company company = (Company) row[1];
+
+            CompanyAndJobsDto dto = new CompanyAndJobsDto();
+            dto.setCompany(new CompanyDto(company)); // Uses the new CompanyDto(Company company) constructor
+            dto.setJob(new JobDto(job)); // Uses the new JobDto(Job job) constructor
+
+            relatedJobsWithCompanies.add(dto);
+        }
+        return relatedJobsWithCompanies;
     }
+
+
 
 
 

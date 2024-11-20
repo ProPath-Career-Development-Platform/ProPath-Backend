@@ -13,5 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CompanyAndJobsDto {
     private CompanyDto company;
+    private JobDto job;
    // private List<PostJobDto> postedJobs;
 }
