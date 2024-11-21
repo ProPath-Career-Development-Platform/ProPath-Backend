@@ -370,4 +370,9 @@ public class CompanyServiceImpl implements CompanyService {
         Company updatedCompany = companyRepository.save(company);
         return CompanyMapper.maptoCompanyDto(updatedCompany);
     }
+
+    @Override
+    public Integer getPendingRequestsCount() {
+        return companyRepository.countByStatus("pending");
+    }
 }
