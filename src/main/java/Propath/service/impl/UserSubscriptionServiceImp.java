@@ -2,7 +2,6 @@ package Propath.service.impl;
 
 import Propath.dto.SubscriptionPlanDto;
 import Propath.dto.UserSubscriptionDto;
-import Propath.mapper.EventMapper;
 import Propath.mapper.SubscriptionPlanMapper;
 import Propath.mapper.UserSubscriptionMapper;
 import Propath.model.SubscriptionPlan;
@@ -31,13 +30,12 @@ public class UserSubscriptionServiceImp implements UserSubscriptionService {
     private UserSubscriptionRepository userSubscriptionRepository;
 
     @Override
-    public void createBasicUser(){
+    public void createBasicUser(int id){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName(); // Get the username of the logged-in user
+
 
         // Find the user by email
-        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+        Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found");
@@ -98,4 +96,39 @@ public class UserSubscriptionServiceImp implements UserSubscriptionService {
 
 
     }
+
+    @Override
+    public Boolean isPlanExpired() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Get the username of the logged-in user
+
+        // Find the user by email
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found for email: " + userEmail);
+        }
+
+        Optional<UserSubscription> planOptional = userSubscriptionRepository.findByUser_IdAndStatus(userOptional.get().getId(), "ACTIVE");
+
+        if (planOptional.isEmpty()) {
+            throw new RuntimeException("No active subscription found for user: " + userEmail);
+        }
+
+        UserSubscription plan = planOptional.get();
+        String planName = plan.getSubscriptionPlan().getPlanName();
+        LocalDate endDate = plan.getEndDate();
+
+        if ("BASIC".equals(planName)) {
+            return false; // BASIC plan is not considered expired
+        }
+
+        if (("STANDARD".equals(planName) || "PREMIUM".equals(planName)) && endDate.isAfter(LocalDate.now())) {
+            return false; // STANDARD or PREMIUM and still valid
+        }
+
+        // Plan is expired
+        return true;
+    }
+
 }

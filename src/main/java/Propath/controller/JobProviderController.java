@@ -255,6 +255,14 @@ public class JobProviderController {
 
     }
 
+    @GetMapping("/check-subscripton")
+    public ResponseEntity<Boolean> checkSubscription(){
+
+        Boolean result = userSubscriptionService.isPlanExpired();
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
 
 
 

@@ -51,8 +51,7 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = CompanyMapper.maptoCompany(companyDto);
         Company newCompany = companyRepository.save(company);
 
-        //subscription
-        userSubscriptionService.createBasicUser();
+
 
 
         return CompanyMapper.maptoCompanyDto(newCompany);

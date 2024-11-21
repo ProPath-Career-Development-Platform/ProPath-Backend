@@ -5,9 +5,11 @@ import Propath.dto.UserSubscriptionDto;
 import java.util.List;
 
 public interface UserSubscriptionService {
-    void createBasicUser();
+    void createBasicUser(int id);
 
     UserSubscriptionDto getSubscription();
 
     List<SubscriptionPlanDto> getSubscriptionPlans();
+
+    Boolean isPlanExpired();
 }
