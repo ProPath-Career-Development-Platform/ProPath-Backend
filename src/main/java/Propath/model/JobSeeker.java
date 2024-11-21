@@ -24,5 +24,24 @@ public class JobSeeker {
     @JoinColumn(name ="user_id")
     private User user;
 
+    @Column(name = "name")
+    private String name;
 
+    @Column(name = "preferred_classification")
+    private String preferred_classification;
+
+    @Column(name = "preferred_sub_classification")
+    private String preferred_sub_classification;
+
+    @Column(name = "location")
+    private String location;
+
+    @Column(name = "contact_no")
+    private String contact_no;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "gender")
+    private String gender;
 }

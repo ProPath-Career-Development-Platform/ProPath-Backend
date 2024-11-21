@@ -35,4 +35,6 @@ public interface CompanyService {
     String getCompanyStatus();
 
     CompanyDto approveCompany(int id);
+
+    Integer getPendingRequestsCount();
 }
