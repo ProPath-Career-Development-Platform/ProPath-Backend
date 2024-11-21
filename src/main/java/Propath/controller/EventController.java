@@ -10,7 +10,7 @@ import java.util.List;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/event")
+@RequestMapping("/jobseeker")
 public class EventController {
     @Autowired
     private JobSeekerEventService jobSeekerEventService;
@@ -19,9 +19,9 @@ public class EventController {
         return jobSeekerEventService.getAllEvents();
     }
 
-    @PostMapping("/registerEvent")
-    public ResponseEntity<String> registerEvent(@RequestParam int seekerId , @RequestParam Long eventId){
-        String output = jobSeekerEventService.registerEvent(seekerId,eventId);
+    @PostMapping("/registerEvent/{eventId}")
+    public ResponseEntity<String> registerEvent(@PathVariable Long eventId){
+        String output = jobSeekerEventService.registerEvent(eventId);
         return ResponseEntity.ok(output);
     }
 

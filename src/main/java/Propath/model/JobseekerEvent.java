@@ -1,9 +1,7 @@
 package Propath.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +9,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "jobseeker_event" , uniqueConstraints = {@UniqueConstraint(columnNames = {"event_id","jobSeeker_id"})})
 
 public class JobseekerEvent {
@@ -30,12 +30,6 @@ public class JobseekerEvent {
 
     private Boolean isApplied;
 
-    public JobseekerEvent(Event event,JobSeeker jobSeeker , LocalDateTime appliedDate, Boolean isApplied){
-        this.registrationId = null;
-        this.event = event;
-        this.jobSeeker = jobSeeker;
-        this.appliedDate = appliedDate;
-        this.isApplied = isApplied;
-    }
+
 }
 
