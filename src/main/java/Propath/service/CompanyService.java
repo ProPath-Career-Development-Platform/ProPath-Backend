@@ -4,6 +4,7 @@ import Propath.dto.CompanyDto;
 import Propath.model.Company;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CompanyService {
 
@@ -32,4 +33,6 @@ public interface CompanyService {
     Boolean DeleteCompany();
 
     String getCompanyStatus();
+
+    CompanyDto approveCompany(int id);
 }

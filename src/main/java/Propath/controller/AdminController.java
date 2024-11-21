@@ -41,4 +41,10 @@ public class AdminController {
         return ResponseEntity.ok(requests);
     }
 
+    @PutMapping("/companyRequests/{id}/approve")
+    public ResponseEntity<?> approveCompany(@PathVariable int id) {
+        CompanyDto updatedCompany = companyService.approveCompany(id);
+        return ResponseEntity.ok(updatedCompany);
+    }
+
 }
