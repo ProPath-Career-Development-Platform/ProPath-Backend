@@ -1,8 +1,10 @@
 package Propath.service.impl;
 
 import Propath.dto.ApplicantDto;
+import Propath.dto.CompanyDto;
 import Propath.dto.JobDto;
 import Propath.mapper.ApplicantMapper;
+import Propath.mapper.CompanyMapper;
 import Propath.mapper.JobMapper;
 import Propath.model.*;
 import Propath.repository.ApplicantRepository;
@@ -230,6 +232,12 @@ public class JobServiceImp implements JobService {
             jobDto.setCompany(company);
             return jobDto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobDto> getAllPostedJobs() {
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream().map((job) -> JobMapper.maptoJobDto(job)).collect(Collectors.toList());
     }
 
 

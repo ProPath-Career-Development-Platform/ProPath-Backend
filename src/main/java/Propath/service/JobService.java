@@ -28,5 +28,7 @@ public interface JobService {
 
     List<JobDto> getAllJobs();
 
+    List<JobDto> getAllPostedJobs();
+
 
 }

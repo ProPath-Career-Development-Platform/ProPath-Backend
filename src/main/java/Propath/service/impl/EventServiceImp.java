@@ -1,9 +1,12 @@
 package Propath.service.impl;
 
+import Propath.dto.CompanyDto;
 import Propath.dto.EventDto;
 import Propath.dto.JobSeekerEventDto;
+import Propath.mapper.CompanyMapper;
 import Propath.mapper.EventMapper;
 import Propath.mapper.JobSeekerEventMapper;
+import Propath.model.Company;
 import Propath.model.Event;
 import Propath.model.JobseekerEvent;
 import Propath.model.User;
@@ -172,8 +175,11 @@ public class EventServiceImp  implements EventService {
                 .collect(Collectors.toList());
     }
 
-
-
+    @Override
+    public List<EventDto> getAllPostedEvent() {
+        List<Event> events = eventRepository.findAll();
+        return events.stream().map((event) -> EventMapper.maptoEventDto(event)).collect(Collectors.toList());
+    }
 
 
 
