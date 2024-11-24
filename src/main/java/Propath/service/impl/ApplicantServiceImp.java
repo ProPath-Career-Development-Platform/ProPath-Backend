@@ -3,12 +3,15 @@ package Propath.service.impl;
 import Propath.dto.ApplicantDto;
 import Propath.mapper.ApplicantMapper;
 import Propath.model.Applicant;
+import Propath.model.Company;
 import Propath.model.Job;
 import Propath.model.User;
 import Propath.repository.ApplicantRepository;
+import Propath.repository.CompanyRepository;
 import Propath.repository.JobRepository;
 import Propath.repository.UserRepository;
 import Propath.service.ApplicantService;
+import Propath.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +29,8 @@ public class ApplicantServiceImp implements ApplicantService {
     private ApplicantRepository applicantRepository;
     private UserRepository userRepository;
     private JobRepository jobRepository;
+    private CompanyRepository companyRepository;
+    private EmailService emailService;
 
     @Override
     public List<ApplicantDto> getApplicants(Long jobId) {
@@ -216,5 +221,55 @@ public class ApplicantServiceImp implements ApplicantService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public Boolean sendEmail(List<Integer> ids,Long jobId) {
+        try {
+
+            Job job = jobRepository.findById(jobId).orElseThrow(()->new RuntimeException("job is not found"));
+
+            String title= job.getJobTitle();
+            User user = job.getUser();
+            String companyName;
+            try{
+
+                Optional<Company> optionalCompany = companyRepository.findByUserId(user.getId());
+
+                // Get the company from the Optional
+                Company company = optionalCompany.orElseThrow(() ->
+                        new RuntimeException("Company not found for the user"));
+                companyName = company.getCompanyName();
+            }catch(Exception e){
+                throw new RuntimeException("Error retrieving the company", e);
+            }
+
+
+            for(Integer id:ids){
+                Applicant applicant = applicantRepository.findByUserId(id);
+
+                if(applicant==null){
+                    throw new RuntimeException("Applicant not found for the id"+id);
+                }
+                String mail = applicant.getEmail();
+                String name = applicant.getName();
+
+                String subject = "Interview Invitation for " + title;
+                String body = "Dear " + name + ",\n\n"
+                        + "You have been selected for an interview for the position of " + title + " at " + companyName + ".\n"
+                        + "Please check your schedule and prepare accordingly.\n\n"
+                        + "Best regards,\n" + companyName;
+
+
+                emailService.sendEmails(mail,subject,body);
+            }
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while sending emails",e);
+
+        }
+
+
     }
 }

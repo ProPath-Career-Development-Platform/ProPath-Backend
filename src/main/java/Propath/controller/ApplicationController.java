@@ -64,11 +64,13 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update status");
         }
     }
-
+//this method is trigger when applicant will go for the interview not selected for the job.
     @PutMapping("applicant/updateStatusSelected/{jobId}")
     public ResponseEntity<String> updateStatusSelected(@PathVariable Long jobId ,@RequestBody List<Integer> ids){
 
         Boolean UpdatePreSelected = applicantService.updateStatusToSelected(ids,jobId);
+
+        Boolean SentEmail = applicantService.sendEmail(ids,jobId);
 
         if(UpdatePreSelected){
             return ResponseEntity.ok("Status Update Successfully");

@@ -19,10 +19,13 @@ import com.mailersend.sdk.exceptions.MailerSendException;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import Propath.service.EmailService;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -57,6 +60,7 @@ public class EmailServiceImp implements EmailService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
+    private JavaMailSender mailSender;
     @Override
     public LocalDateTime add15MinutesToCurrentTime() {
         return LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
@@ -222,6 +226,14 @@ public class EmailServiceImp implements EmailService {
 
     }
 
+    public void sendEmails(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        mailSender.send(message);
+    }
+
 
 
 
@@ -229,5 +241,7 @@ public class EmailServiceImp implements EmailService {
 
 
 }
+
+
 
 
