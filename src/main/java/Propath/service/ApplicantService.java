@@ -19,4 +19,6 @@ public interface ApplicantService {
     Boolean updateStatusToPreSelected(List<Integer> ids, Long jobId);
 
     Boolean updateStatusToSelected(List<Integer> ids, Long jobId);
+
+    ApplicantDto getFormResponse(Long jobId, Integer userId);
 }

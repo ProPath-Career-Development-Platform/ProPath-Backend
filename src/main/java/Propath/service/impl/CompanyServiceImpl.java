@@ -8,6 +8,7 @@ import Propath.model.User;
 import Propath.repository.CompanyRepository;
 import Propath.repository.UserRepository;
 import Propath.service.CompanyService;
+import Propath.service.UserSubscriptionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ public class CompanyServiceImpl implements CompanyService {
         private CompanyMapper companyMapper;
         private UserRepository userRepository;
         private PasswordEncoder passwordEncoder;
+        private UserSubscriptionService userSubscriptionService;
 
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
@@ -49,6 +51,9 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company = CompanyMapper.maptoCompany(companyDto);
         Company newCompany = companyRepository.save(company);
+
+
+
 
         return CompanyMapper.maptoCompanyDto(newCompany);
     }

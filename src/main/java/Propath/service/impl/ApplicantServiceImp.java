@@ -217,4 +217,33 @@ public class ApplicantServiceImp implements ApplicantService {
             return false;
         }
     }
+
+    @Override
+    public ApplicantDto getFormResponse(Long jobId, Integer UserId){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<User> jobSeeker = userRepository.findById(UserId);
+
+        if(jobSeeker.isEmpty()){
+            throw new RuntimeException("job seeker id not own");
+
+        }
+
+        Optional<Applicant> application = applicantRepository.findByUserIdAndJobId(UserId,jobId);
+
+        if(application.isEmpty()){
+            return null;
+        }else{
+            return ApplicantMapper.mapToApplicantDto(application.get());
+        }
+
+
+
+    }
 }

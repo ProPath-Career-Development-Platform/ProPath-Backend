@@ -2,6 +2,7 @@ package Propath.repository;
 
 import Propath.model.Event;
 
+import Propath.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,8 @@ public interface EventRepository extends JpaRepository<Event,Long> {
     Optional<Event> findByUserIdAndId(int id, Long eventID);
 
     Optional<Event> findByIdAndDeleteFalse(Long eventID);
+
+    List<Event> findByDeleteFalseAndStatus(String active);
+
+    List<Event> findByUserAndDeleteFalseAndStatus(User user, String active);
 }
