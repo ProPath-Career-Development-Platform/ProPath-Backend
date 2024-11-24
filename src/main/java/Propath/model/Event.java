@@ -42,6 +42,9 @@ public class Event {
     @JoinColumn(name = "userID", referencedColumnName = "id", nullable = false)
     private User user;
 
+    @Column(name ="current_participants" , nullable = false , columnDefinition = "int default 0")
+    private int currentParticipants;
+
 
 
 }

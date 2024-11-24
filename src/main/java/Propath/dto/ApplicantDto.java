@@ -22,6 +22,7 @@ public class ApplicantDto {
     private LocalDate appliedDate;
     private String status;
     private String response;
+    private String cv;
     private String email;
     private String exp;
     private String name;

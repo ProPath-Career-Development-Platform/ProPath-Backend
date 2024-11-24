@@ -14,12 +14,14 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager,EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.emailService = emailService;
     }
 
     public AuthenticationResponse register(User request) {
@@ -33,6 +35,17 @@ public class AuthenticationService {
         user.setRole(request.getRole());
 
         user = userRepository.save(user);
+
+        String Role = String.valueOf(request.getRole());
+
+        if(Role.equals("JobProvider")){
+
+            String name = String.valueOf(request.getName());
+            String email = String.valueOf(request.getEmail());
+            emailService.sendRegisterMailForJP(name,email);
+
+
+        }
 
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
