@@ -29,6 +29,8 @@ public class CheckoutController {
     private final PaymentSessionReository paymentSessionReository;
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final BillHistoryRepository billHistoryRepository;
+    private final EventRepository eventRepository;
+    private final JobRepository jobRepository;
 
 
 
@@ -36,13 +38,17 @@ public class CheckoutController {
                               SubscriptionPlanRepository subscriptionPlanRepository,
                               PaymentSessionReository paymentSessionReository,
                               UserSubscriptionRepository userSubscriptionRepository,
-                              BillHistoryRepository billHistoryRepository
+                              BillHistoryRepository billHistoryRepository,
+                              EventRepository eventRepository,
+                              JobRepository jobRepository
     ) {
         this.userRepository = userRepository;
         this.subscriptionPlanRepository = subscriptionPlanRepository;
         this.paymentSessionReository = paymentSessionReository;
         this.userSubscriptionRepository = userSubscriptionRepository;
         this.billHistoryRepository = billHistoryRepository;
+        this.eventRepository = eventRepository;
+        this.jobRepository = jobRepository;
     }
 
     static {
@@ -485,6 +491,125 @@ public class CheckoutController {
 
         return new ResponseEntity<>(userBills, HttpStatus.OK);
     }
+
+    @GetMapping("/plan-limits-check")
+    public ResponseEntity<Map<String, Object>> canUserChangePlan() {
+        Map<String, Object> pcgStatus = new HashMap<>();
+        boolean basic = true;
+        boolean standard = true;
+        boolean premium = true;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        User user = userOptional.get();
+
+
+        List<Event> events = eventRepository.findByUserAndDeleteFalseAndStatus(user, "active");
+        List<Job> jobs = jobRepository.findByUserAndStatus(user, "active");
+        Optional<UserSubscription> cPlan = userSubscriptionRepository.findByUser_IdAndStatus(user.getId(),"ACTIVE");
+
+        if(cPlan.isEmpty()){
+            throw new RuntimeException("User doesnt have a plan");
+        }
+
+        int activeJobs = jobs.size();
+        int activeEvents = events.size();
+
+        StringBuilder errorMessages = new StringBuilder();
+        Map<String, String> exceedDetails = new HashMap<>();
+        String planName = cPlan.get().getSubscriptionPlan().getPlanName();
+
+        // Evaluate plan eligibility
+        if (activeJobs >= 3 || activeEvents >= 3) {
+
+
+            if(activeJobs > 3 || activeEvents > 3){
+                basic = false;
+            }
+
+            if (activeJobs >=3&& planName.equals("BASIC")) {
+                exceedDetails.put("job", "exceed");
+            }else{
+                exceedDetails.put("job", "none");
+            }
+            if (activeEvents >= 3 && planName.equals("BASIC")) {
+                exceedDetails.put("event", "exceed");
+            }else{
+                exceedDetails.put("event", "none");
+            }
+        }else{
+            exceedDetails.put("job", "none");
+            exceedDetails.put("event", "none");
+        }
+
+
+        if (activeJobs >= 5 || activeEvents >= 5) {
+
+            if(activeJobs > 5 || activeEvents > 5){
+                standard = false;
+            }
+
+            if (activeJobs >=5 && planName.equals("STANDARD")) {
+                exceedDetails.put("job", "exceed");
+            }else{
+                exceedDetails.put("job", "none");
+            }
+
+            if (activeEvents >5 && planName.equals("STANDARD")) {
+                exceedDetails.put("event", "exceed");
+            }else{
+                exceedDetails.put("event", "none");
+            }
+        }
+
+
+        if (activeJobs >= 10 || activeEvents >= 10) {
+
+
+            if(activeJobs > 10 || activeEvents > 10){
+                premium = false;
+            }
+
+            if (activeJobs >=10 && planName.equals("PREMIUM")) {
+                exceedDetails.put("job", "exceed");
+            }else{
+                exceedDetails.put("job", "none");
+            }
+
+            if (activeEvents >=10 && planName.equals("PREMIUM")) {
+                exceedDetails.put("event", "exceed");
+            }else{
+                exceedDetails.put("event", "none");
+            }
+        }
+
+
+        pcgStatus.put("BASIC", basic);
+        pcgStatus.put("STANDARD", standard);
+        pcgStatus.put("PREMIUM", premium);
+        pcgStatus.put("MyPlanName:",cPlan.get().getSubscriptionPlan().getPlanName());
+        pcgStatus.put("MyPlanId:",cPlan.get().getSubscriptionPlan().getId());
+
+
+
+        // Add exceed details
+        if (!exceedDetails.isEmpty()) {
+            pcgStatus.put("EXCEED_SERVICES", exceedDetails);
+        }
+
+
+
+        return new ResponseEntity<>(pcgStatus, HttpStatus.OK);
+    }
+
 
 
 }

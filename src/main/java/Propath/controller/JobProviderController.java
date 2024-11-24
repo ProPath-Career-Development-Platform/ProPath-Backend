@@ -38,6 +38,9 @@ public class JobProviderController {
     @Autowired
     private UserSubscriptionService userSubscriptionService;
 
+    @Autowired
+    private ApplicantService applicantService;
+
 
 
 
@@ -132,6 +135,28 @@ public class JobProviderController {
         job.setUser(null);
 
         return new ResponseEntity<>(job,HttpStatus.OK);
+    }
+
+    @GetMapping("/job/{jobId}/applicant/{userId}")
+    public ResponseEntity<Map<String,Object>> getResponse(@PathVariable("jobId") Long jobId , @PathVariable("userId") Integer userId){
+
+        ApplicantDto applicant = applicantService.getFormResponse(jobId,userId);
+        Map<String, Object> application = new HashMap<>();
+
+        if(applicant.getJob().getCustomizedForm() == null){
+            application.put("response", "form-not-found");
+            return new ResponseEntity<>(application, HttpStatus.OK);
+        }else {
+
+            if(applicant.getResponse() != null) {
+                application.put("response", applicant.getResponse());
+                return new ResponseEntity<>(application, HttpStatus.OK);
+            }else{
+                application.put("response", "no-response");
+                return new ResponseEntity<>(application, HttpStatus.OK);
+            }
+        }
+
     }
 
     @PutMapping("/job/status/expire/{id}")

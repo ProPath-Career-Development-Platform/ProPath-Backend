@@ -1,13 +1,17 @@
 package Propath.Scheduler;
 
+import Propath.model.Event;
 import Propath.model.Job;
 import Propath.model.UserSubscription;
+import Propath.repository.EventRepository;
 import Propath.repository.JobRepository;
 import Propath.repository.UserSubscriptionRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -16,14 +20,17 @@ public class SubscriptionScheduler {
 
     private final UserSubscriptionRepository userSubscriptionRepository;
     private final JobRepository jobRepository;
+    private final EventRepository eventRepository;
 
     public SubscriptionScheduler(
             UserSubscriptionRepository userSubscriptionRepository,
-            JobRepository jobRepository
+            JobRepository jobRepository,
+            EventRepository eventRepository
 
     ) {
         this.userSubscriptionRepository = userSubscriptionRepository;
         this.jobRepository = jobRepository;
+        this.eventRepository = eventRepository;
     }
 
     @Scheduled(cron = "0 0 0 * * *") //mid night
@@ -50,7 +57,8 @@ public class SubscriptionScheduler {
 
     }
 
-    @Scheduled(cron = "0 * * * * *") // Executes every minute
+    //@Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void expireJobs() {
         LocalDate today = LocalDate.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -77,5 +85,38 @@ public class SubscriptionScheduler {
 
 
         jobRepository.saveAll(jobs);
+    }
+
+   // @Scheduled(cron = "0 * * * * *") // Executes every minute
+    @Scheduled(cron = "0 0 0 * * *")
+    public void expireEvents() {
+        LocalDateTime now = LocalDateTime.now(); // Current date and time
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm"); // For "21:20" format
+
+        List<Event> events = eventRepository.findByDeleteFalseAndStatus("active");
+
+        System.out.println("expireEvents cron executed");
+
+        for (Event event : events) {
+            try {
+                // Parse date and time
+                LocalDate expiryDate = LocalDate.parse(event.getDate(), dateFormatter);
+                LocalTime expiryTime = LocalTime.parse(event.getStartTime(), timeFormatter);
+
+                // Combine date and time into LocalDateTime
+                LocalDateTime expiryDateTime = LocalDateTime.of(expiryDate, expiryTime);
+
+                // Check if the event has expired
+                if (now.isAfter(expiryDateTime)) {
+                    event.setStatus("expire");
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to parse expiry date or time for event ID: " + event.getId());
+                e.printStackTrace();
+            }
+        }
+
+        eventRepository.saveAll(events);
     }
 }
