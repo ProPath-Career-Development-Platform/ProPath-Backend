@@ -1,6 +1,7 @@
 package Propath.controller;
 
 import Propath.dto.ApplicantDto;
+import Propath.dto.ApplicantRequestDto;
 import Propath.model.JobSeeker;
 import Propath.repository.JobSeekerRepository;
 import Propath.service.ApplicantService;
@@ -63,8 +64,10 @@ public class ApplicationController {
     }
 
     @PostMapping("/applicant/selected")
-    public ResponseEntity<List<Map<String,Object>>> getApplicantDetails(@RequestBody List<Integer> ids) {
-        List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(ids);
+    public ResponseEntity<List<Map<String,Object>>> getApplicantDetails(@RequestBody ApplicantRequestDto request ) {
+
+     //   List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(ids,jobId);
+        List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(request.getIds(), request.getJobId());
 
 
         List<Map<String, Object>> appliedUsers = new ArrayList<>();

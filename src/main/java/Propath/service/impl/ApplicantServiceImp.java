@@ -48,7 +48,7 @@ public class ApplicantServiceImp implements ApplicantService {
         List<String> statuses = Arrays.asList("pending", "preSelected");
         List<Applicant> applicants = applicantRepository.findByJobIdAndStatusIn(jobId,statuses);
 
-      
+
 
         return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
@@ -56,8 +56,8 @@ public class ApplicantServiceImp implements ApplicantService {
     }
 
     @Override
-    public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds) {
-        List<Applicant> applicants = applicantRepository.findAllByUserIdIn(userIds);
+    public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds, Long jobId) {
+        List<Applicant> applicants = applicantRepository.findByUserIdInAndJobId(userIds,jobId);
 
         return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
