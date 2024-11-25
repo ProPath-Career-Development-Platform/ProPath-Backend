@@ -3,11 +3,9 @@ package Propath.controller;
 import Propath.dto.*;
 import Propath.model.AuthenticationResponse;
 import Propath.model.JobseekerEvent;
+import Propath.model.SubscriptionPlan;
 import Propath.model.User;
-import Propath.service.EmailService;
-import Propath.service.EventService;
-import Propath.service.JobProviderService;
-import Propath.service.JobService;
+import Propath.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,12 @@ public class JobProviderController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private UserSubscriptionService userSubscriptionService;
+
+    @Autowired
+    private ApplicantService applicantService;
 
 
 
@@ -133,6 +137,28 @@ public class JobProviderController {
         return new ResponseEntity<>(job,HttpStatus.OK);
     }
 
+    @GetMapping("/job/{jobId}/applicant/{userId}")
+    public ResponseEntity<Map<String,Object>> getResponse(@PathVariable("jobId") Long jobId , @PathVariable("userId") Integer userId){
+
+        ApplicantDto applicant = applicantService.getFormResponse(jobId,userId);
+        Map<String, Object> application = new HashMap<>();
+
+        if(applicant.getJob().getCustomizedForm() == null){
+            application.put("response", "form-not-found");
+            return new ResponseEntity<>(application, HttpStatus.OK);
+        }else {
+
+            if(applicant.getResponse() != null) {
+                application.put("response", applicant.getResponse());
+                return new ResponseEntity<>(application, HttpStatus.OK);
+            }else{
+                application.put("response", "no-response");
+                return new ResponseEntity<>(application, HttpStatus.OK);
+            }
+        }
+
+    }
+
     @PutMapping("/job/status/expire/{id}")
     public ResponseEntity<String> updateJobStautsToExpire(@PathVariable("id") Long id){
 
@@ -222,6 +248,44 @@ public class JobProviderController {
 
         return new ResponseEntity<>(registerUsers,HttpStatus.OK);
 
+    }
+
+    @GetMapping("/subscription")
+    public ResponseEntity<Map<String,Object>> getUserSubcriptionDetails(){
+
+        UserSubscriptionDto userSubscriptionDto = userSubscriptionService.getSubscription();
+
+        Map<String, Object> subDes = new HashMap<>();
+
+        subDes.put("userId", userSubscriptionDto.getUser().getId());
+        subDes.put("planName", userSubscriptionDto.getSubscriptionPlan().getPlanName());
+        subDes.put("planPrice", userSubscriptionDto.getSubscriptionPlan().getPrice());
+        subDes.put("planStartDate", userSubscriptionDto.getStartDate());
+        subDes.put("planEndDate", userSubscriptionDto.getEndDate());
+        subDes.put("planCreatedAt", userSubscriptionDto.getCreatedAt());
+        subDes.put("paidStatus", userSubscriptionDto.getPaidStatus());
+        subDes.put("planId", userSubscriptionDto.getSubscriptionPlan().getId());
+
+        return new ResponseEntity<>(subDes, HttpStatus.OK);
+
+
+    }
+
+    @GetMapping("/subscription/plan")
+    public ResponseEntity<List<SubscriptionPlanDto>> getPlanDetails(){
+
+        List<SubscriptionPlanDto> plans = userSubscriptionService.getSubscriptionPlans();
+
+        return new ResponseEntity<>(plans, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/check-subscripton")
+    public ResponseEntity<Boolean> checkSubscription(){
+
+        Boolean result = userSubscriptionService.isPlanExpired();
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
 

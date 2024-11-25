@@ -53,50 +53,20 @@ public class ApplicantServiceImp implements ApplicantService {
         List<String> statuses = Arrays.asList("pending", "preSelected");
         List<Applicant> applicants = applicantRepository.findByJobIdAndStatusIn(jobId,statuses);
 
-        // Map to ApplicantDto and set email
-        return applicants.stream()
-                .map(applicant -> {
-                    ApplicantDto dto = ApplicantMapper.mapToApplicantDto(applicant);
-                   dto.setEmail(applicant.getUser().getEmail());
-                   dto.setExp("Senior");
-                   dto.setName(applicant.getUser().getName());
-                   dto.setSeekerId(applicant.getUser().getId());
-                   dto.setJob(null);
-                   dto.setUser(null);
-                   // Set the email from the User
-                    return dto;
-                })
+
+
+        return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
 
     }
 
     @Override
-    public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds) {
-        List<Applicant> applicants = applicantRepository.findAllByUserIdIn(userIds);
-        return applicants.stream()
-                .map(applicant -> {
-                    ApplicantDto dto = ApplicantMapper.mapToApplicantDto(applicant);
+    public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds, Long jobId) {
+        List<Applicant> applicants = applicantRepository.findByUserIdInAndJobId(userIds,jobId);
 
-                    // Null checks for the User object
-                    if (applicant.getUser() != null) {
-                        dto.setEmail(applicant.getUser().getEmail());
-                        dto.setName(applicant.getUser().getName());
-                        dto.setSeekerId(applicant.getUser().getId());
-                    } else {
-                        // Handle case where user is null, if necessary
-                        dto.setEmail(null);
-                        dto.setName(null);
-                      //  dto.setSeekerId(null);
-                    }
-
-                    // Optionally set experience based on applicant data
-                    dto.setExp("Senior"); // Replace this logic if needed
-                    dto.setJob(null); // Set according to your requirements
-                    dto.setUser(null); // Set according to your requirements
-
-                    return dto;
-                })
+        return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
+
     }
 
 
@@ -224,6 +194,32 @@ public class ApplicantServiceImp implements ApplicantService {
     }
 
     @Override
+
+    public ApplicantDto getFormResponse(Long jobId, Integer UserId){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<User> jobSeeker = userRepository.findById(UserId);
+
+        if(jobSeeker.isEmpty()){
+            throw new RuntimeException("job seeker id not own");
+
+        }
+
+        Optional<Applicant> application = applicantRepository.findByUserIdAndJobId(UserId,jobId);
+
+        if(application.isEmpty()){
+            return null;
+        }else{
+            return ApplicantMapper.mapToApplicantDto(application.get());
+        }
+
+
     public Boolean sendEmail(List<Integer> ids,Long jobId) {
         try {
 
@@ -269,6 +265,7 @@ public class ApplicantServiceImp implements ApplicantService {
             throw new RuntimeException("Error while sending emails",e);
 
         }
+
 
 
     }

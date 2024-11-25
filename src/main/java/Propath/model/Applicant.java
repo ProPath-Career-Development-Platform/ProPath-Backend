@@ -41,17 +41,8 @@ public class Applicant {
 
     private String cv;
 
-    @Transient
+
     private String email;
-
-    @Transient
-    private String exp;
-
-    @Transient
-    private String name;
-
-    @Transient
-    private int seekerId;
 
     @ManyToOne
     @JoinColumn(name = "job_id", referencedColumnName = "id")
