@@ -17,4 +17,5 @@ public interface CompanyRepository extends JpaRepository<Company,Long> {
     List<Company> findByStatus(String status);
 
     Integer countByStatus(String status);
+
 }

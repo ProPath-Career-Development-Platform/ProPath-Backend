@@ -20,5 +20,9 @@ public interface ApplicantService {
 
     Boolean updateStatusToSelected(List<Integer> ids, Long jobId);
 
+
     ApplicantDto getFormResponse(Long jobId, Integer userId);
+
+    Boolean sendEmail(List<Integer>ids,Long jobId);
+
 }
