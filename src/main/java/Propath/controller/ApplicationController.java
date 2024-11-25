@@ -1,13 +1,16 @@
 package Propath.controller;
 
 import Propath.dto.ApplicantDto;
+import Propath.model.JobSeeker;
+import Propath.repository.JobSeekerRepository;
 import Propath.service.ApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @CrossOrigin("*")
 @RestController
@@ -17,17 +20,84 @@ public class ApplicationController {
 
     @Autowired
     private ApplicantService applicantService;
+    @Autowired
+    private JobSeekerRepository jobSeekerRepository;
 
     @GetMapping("myjobs/{jobId}/applications")
-    public ResponseEntity<List<ApplicantDto>> getApplicants(@PathVariable("jobId") Long jobId){
+    public ResponseEntity<List<Map<String,Object>>> getApplicants(@PathVariable("jobId") Long jobId){
         List<ApplicantDto> applicants = applicantService.getApplicants(jobId);
-        return new ResponseEntity<>(applicants, HttpStatus.OK);
+
+
+        List<Map<String, Object>> appliedUsers = new ArrayList<>();
+
+        for( ApplicantDto applicant : applicants){
+            Map<String, Object> application = new HashMap<>();
+
+            Optional<JobSeeker> seekerPersonalInfo = jobSeekerRepository.findByUser_Id(applicant.getUser().getId());
+
+            application.put("id",applicant.getId());
+            application.put("name",applicant.getUser().getName());
+            application.put("atsScore",applicant.getAtsScore());
+            application.put("appliedDate",applicant.getAppliedDate());
+            application.put("status",applicant.getStatus());
+            application.put("response",applicant.getResponse());
+            application.put("email",applicant.getEmail());
+            application.put("seekerId",applicant.getUser().getId());
+            application.put("jobId",applicant.getJob().getId());
+            application.put("cv", applicant.getCv());
+            application.put("exp","senior"); // hardcode , need to create in jobseeker table
+
+            if(seekerPersonalInfo.isEmpty()){
+                application.put("proUrl", null);
+            }else{
+                application.put("proUrl", seekerPersonalInfo.get().getProfilePicture());
+            }
+
+
+            appliedUsers.add(application);
+        }
+
+        return new ResponseEntity<>(appliedUsers,HttpStatus.OK);
+
+
     }
 
     @PostMapping("/applicant/selected")
-    public ResponseEntity<List<ApplicantDto>> getApplicantDetails(@RequestBody List<Integer> ids) {
+    public ResponseEntity<List<Map<String,Object>>> getApplicantDetails(@RequestBody List<Integer> ids) {
         List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(ids);
-        return ResponseEntity.ok(applicants);
+
+
+        List<Map<String, Object>> appliedUsers = new ArrayList<>();
+
+        for( ApplicantDto applicant : applicants){
+            Map<String, Object> application = new HashMap<>();
+
+            Optional<JobSeeker> seekerPersonalInfo = jobSeekerRepository.findByUser_Id(applicant.getUser().getId());
+
+            application.put("id",applicant.getId());
+            application.put("name",applicant.getUser().getName());
+            application.put("atsScore",applicant.getAtsScore());
+           // application.put("appliedDate",applicant.getAppliedDate());
+            application.put("status",applicant.getStatus());
+           // application.put("response",applicant.getResponse());
+            application.put("email",applicant.getEmail());
+            application.put("seekerId",applicant.getUser().getId());
+            application.put("jobId",applicant.getJob().getId());
+          //  application.put("cv", applicant.getCv());
+          //  application.put("exp","senior"); // hardcode , need to create in jobseeker table
+
+            if(seekerPersonalInfo.isEmpty()){
+                application.put("proUrl", null);
+            }else{
+                application.put("proUrl", seekerPersonalInfo.get().getProfilePicture());
+            }
+
+
+            appliedUsers.add(application);
+        }
+
+        return new ResponseEntity<>(appliedUsers,HttpStatus.OK);
+
     }
 
     @PostMapping("/applicant")

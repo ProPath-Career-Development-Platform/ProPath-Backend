@@ -48,19 +48,9 @@ public class ApplicantServiceImp implements ApplicantService {
         List<String> statuses = Arrays.asList("pending", "preSelected");
         List<Applicant> applicants = applicantRepository.findByJobIdAndStatusIn(jobId,statuses);
 
-        // Map to ApplicantDto and set email
-        return applicants.stream()
-                .map(applicant -> {
-                    ApplicantDto dto = ApplicantMapper.mapToApplicantDto(applicant);
-                   dto.setEmail(applicant.getUser().getEmail());
-                   dto.setExp("Senior");
-                   dto.setName(applicant.getUser().getName());
-                   dto.setSeekerId(applicant.getUser().getId());
-                   dto.setJob(null);
-                   dto.setUser(null);
-                   // Set the email from the User
-                    return dto;
-                })
+      
+
+        return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
 
     }
@@ -68,30 +58,10 @@ public class ApplicantServiceImp implements ApplicantService {
     @Override
     public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds) {
         List<Applicant> applicants = applicantRepository.findAllByUserIdIn(userIds);
-        return applicants.stream()
-                .map(applicant -> {
-                    ApplicantDto dto = ApplicantMapper.mapToApplicantDto(applicant);
 
-                    // Null checks for the User object
-                    if (applicant.getUser() != null) {
-                        dto.setEmail(applicant.getUser().getEmail());
-                        dto.setName(applicant.getUser().getName());
-                        dto.setSeekerId(applicant.getUser().getId());
-                    } else {
-                        // Handle case where user is null, if necessary
-                        dto.setEmail(null);
-                        dto.setName(null);
-                      //  dto.setSeekerId(null);
-                    }
-
-                    // Optionally set experience based on applicant data
-                    dto.setExp("Senior"); // Replace this logic if needed
-                    dto.setJob(null); // Set according to your requirements
-                    dto.setUser(null); // Set according to your requirements
-
-                    return dto;
-                })
+        return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
+
     }
 
 
