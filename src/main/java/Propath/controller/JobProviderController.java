@@ -1,12 +1,11 @@
 package Propath.controller;
 
-import Propath.dto.ApplicantDto;
-import Propath.dto.EventDto;
-import Propath.dto.JobDto;
-import Propath.dto.JobProviderDto;
-import Propath.service.EventService;
-import Propath.service.JobProviderService;
-import Propath.service.JobService;
+import Propath.dto.*;
+import Propath.model.AuthenticationResponse;
+import Propath.model.JobseekerEvent;
+import Propath.model.SubscriptionPlan;
+import Propath.model.User;
+import Propath.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin("*")
@@ -32,6 +31,15 @@ public class JobProviderController {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private UserSubscriptionService userSubscriptionService;
+
+    @Autowired
+    private ApplicantService applicantService;
 
 
 
@@ -129,6 +137,28 @@ public class JobProviderController {
         return new ResponseEntity<>(job,HttpStatus.OK);
     }
 
+    @GetMapping("/job/{jobId}/applicant/{userId}")
+    public ResponseEntity<Map<String,Object>> getResponse(@PathVariable("jobId") Long jobId , @PathVariable("userId") Integer userId){
+
+        ApplicantDto applicant = applicantService.getFormResponse(jobId,userId);
+        Map<String, Object> application = new HashMap<>();
+
+        if(applicant.getJob().getCustomizedForm() == null){
+            application.put("response", "form-not-found");
+            return new ResponseEntity<>(application, HttpStatus.OK);
+        }else {
+
+            if(applicant.getResponse() != null) {
+                application.put("response", applicant.getResponse());
+                return new ResponseEntity<>(application, HttpStatus.OK);
+            }else{
+                application.put("response", "no-response");
+                return new ResponseEntity<>(application, HttpStatus.OK);
+            }
+        }
+
+    }
+
     @PutMapping("/job/status/expire/{id}")
     public ResponseEntity<String> updateJobStautsToExpire(@PathVariable("id") Long id){
 
@@ -154,6 +184,110 @@ public class JobProviderController {
 
         
     }
+
+    @PostMapping("/send/v-email")
+    public ResponseEntity<Boolean> sendVerification(@RequestBody VerficationTokenDto verficationTokenDto){
+
+        Boolean result = emailService.settingsEmailVerification(verficationTokenDto);
+
+        if (result) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
+    }
+
+    @PostMapping("/verify-email/{token}")
+    public ResponseEntity<?> checkVerification(@PathVariable("token") String token) {
+
+        try {
+            AuthenticationResponse result = emailService.checkVerification(token);
+            return ResponseEntity.ok(result); // Return the AuthenticationResponse with the new JWT
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Verification failed: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/update/personal/name")
+    public ResponseEntity<Boolean> updatePersonalName(@RequestBody User user) {
+
+        Boolean result = jobProviderService.updatePersonalName(user);
+
+        if (result) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
+    }
+
+    @GetMapping("/event/register/{id}")
+    public ResponseEntity<List<Map<String,Object>>> getRegisterdUsersByEventId(@PathVariable("id") Long id){
+
+        List<JobSeekerEventDto> jobSeekerEventDtos = eventService.getRegisteredusers(id);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy, h:mm a");
+        List<Map<String, Object>> registerUsers = new ArrayList<>();
+
+        for(JobSeekerEventDto jobSeekerEventDto : jobSeekerEventDtos){
+            Map<String, Object> registerUser = new HashMap<>();
+
+            registerUser.put("userId", jobSeekerEventDto.getJobSeeker().getUser().getId());
+            registerUser.put("userName", jobSeekerEventDto.getJobSeeker().getUser().getUsername());
+            registerUser.put("userEmail", jobSeekerEventDto.getJobSeeker().getUser().getEmail());
+            registerUser.put("profilePicture", jobSeekerEventDto.getJobSeeker().getProfilePicture());
+            registerUser.put("appliedDate", jobSeekerEventDto.getAppliedDate().format(formatter));
+            registerUser.put("IsApplied", jobSeekerEventDto.getIsApplied());
+            registerUser.put("regID", jobSeekerEventDto.getId());
+
+            registerUsers.add(registerUser);
+
+        }
+
+        registerUsers.sort(Comparator.comparing(user -> (Long) user.get("regID")));
+
+        return new ResponseEntity<>(registerUsers,HttpStatus.OK);
+
+    }
+
+    @GetMapping("/subscription")
+    public ResponseEntity<Map<String,Object>> getUserSubcriptionDetails(){
+
+        UserSubscriptionDto userSubscriptionDto = userSubscriptionService.getSubscription();
+
+        Map<String, Object> subDes = new HashMap<>();
+
+        subDes.put("userId", userSubscriptionDto.getUser().getId());
+        subDes.put("planName", userSubscriptionDto.getSubscriptionPlan().getPlanName());
+        subDes.put("planPrice", userSubscriptionDto.getSubscriptionPlan().getPrice());
+        subDes.put("planStartDate", userSubscriptionDto.getStartDate());
+        subDes.put("planEndDate", userSubscriptionDto.getEndDate());
+        subDes.put("planCreatedAt", userSubscriptionDto.getCreatedAt());
+        subDes.put("paidStatus", userSubscriptionDto.getPaidStatus());
+        subDes.put("planId", userSubscriptionDto.getSubscriptionPlan().getId());
+
+        return new ResponseEntity<>(subDes, HttpStatus.OK);
+
+
+    }
+
+    @GetMapping("/subscription/plan")
+    public ResponseEntity<List<SubscriptionPlanDto>> getPlanDetails(){
+
+        List<SubscriptionPlanDto> plans = userSubscriptionService.getSubscriptionPlans();
+
+        return new ResponseEntity<>(plans, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/check-subscripton")
+    public ResponseEntity<Boolean> checkSubscription(){
+
+        Boolean result = userSubscriptionService.isPlanExpired();
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
 
 
 

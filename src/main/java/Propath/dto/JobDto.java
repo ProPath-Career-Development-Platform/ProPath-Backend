@@ -1,6 +1,7 @@
 package Propath.dto;
 
 import Propath.model.Company;
+import Propath.model.Job;
 import Propath.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +34,40 @@ public class JobDto {
     private Boolean delete;
     private String status;
     private Integer applicantCount;
+    private String location;
+    private String companyName;
+    private String bannerImg;
+    private String logoImg;
     private User user;
     private Company company;
+
+    public JobDto(Job job) {
+        this.id = job.getId();
+        this.jobTitle = job.getJobTitle();
+        this.tags = job.getTags();
+        this.jobRole = job.getJobRole();
+        this.minSalary = job.getMinSalary();
+        this.maxSalary = job.getMaxSalary();
+        this.salaryType = job.getSalaryType();
+        this.education = job.getEducation();
+        this.experience = job.getExperience();
+        this.jobType = job.getJobType();
+        this.vacancies = job.getVacancies();
+        this.expiryDate = job.getExpiryDate();
+        this.jobLevel = job.getJobLevel();
+        this.jobDescription = job.getJobDescription();
+        this.customizedForm = job.getCustomizedForm();
+        this.postedIn = job.getPostedIn();
+        this.delete = job.getDelete();
+        this.status = job.getStatus();
+        this.applicantCount = job.getApplicantCount();
+//        this.location = job.getLocation();
+        this.companyName = job.getCompany() != null ? job.getCompany().getCompanyName() : null;
+        this.bannerImg = job.getCompany() != null ? job.getCompany().getBannerImg() : null;
+        this.logoImg = job.getCompany() != null ? job.getCompany().getLogoImg() : null;
+        this.user = job.getUser();
+        this.company = job.getCompany();
+    }
+
+
 }

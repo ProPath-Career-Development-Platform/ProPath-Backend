@@ -2,6 +2,7 @@ package Propath.service;
 
 
 import Propath.dto.EventDto;
+import Propath.dto.JobSeekerEventDto;
 import Propath.model.Event;
 import org.springframework.data.domain.Page;
 
@@ -16,4 +17,7 @@ public interface EventService {
   List<EventDto> getAllEvent();
 
 
+    List<JobSeekerEventDto> getRegisteredusers(Long id);
+
+  List<EventDto> getAllPostedEvent();
 }

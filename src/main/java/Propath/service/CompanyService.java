@@ -4,6 +4,7 @@ import Propath.dto.CompanyDto;
 import Propath.model.Company;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CompanyService {
 
@@ -11,6 +12,8 @@ public interface CompanyService {
     CompanyDto RegisterCompany(CompanyDto companyDto);
 
     List<CompanyDto> getALLCompanies();
+
+    List<CompanyDto> getAllRequests();
 
     CompanyDto updateCompanyStatus(Long id,CompanyDto updatedCompany);
 
@@ -28,4 +31,10 @@ public interface CompanyService {
     Boolean UpdateUserPassword(CompanyDto companyDto);
 
     Boolean DeleteCompany();
+
+    String getCompanyStatus();
+
+    CompanyDto approveCompany(int id);
+
+    Integer getPendingRequestsCount();
 }

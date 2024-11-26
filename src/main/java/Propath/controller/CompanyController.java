@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin("*")
 @RestController
@@ -94,6 +95,20 @@ public class CompanyController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
+    }
+
+    @GetMapping("/company/status")
+    public ResponseEntity<String> comapanyStatus(){
+
+        String result = companyService.getCompanyStatus();
+
+        if(result.equals("active") || result.equals("pending") || result.equals("none")){
+            return ResponseEntity.ok(result);
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error");
+        }
+
+
     }
 
 
