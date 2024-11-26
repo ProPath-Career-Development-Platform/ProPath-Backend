@@ -195,7 +195,7 @@ public class ApplicantServiceImp implements ApplicantService {
 
     @Override
 
-    public ApplicantDto getFormResponse(Long jobId, Integer UserId){
+    public ApplicantDto getFormResponse(Long jobId, Integer UserId) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Assuming you store the email in the principal
@@ -206,19 +206,21 @@ public class ApplicantServiceImp implements ApplicantService {
 
         Optional<User> jobSeeker = userRepository.findById(UserId);
 
-        if(jobSeeker.isEmpty()){
+        if (jobSeeker.isEmpty()) {
             throw new RuntimeException("job seeker id not own");
 
         }
 
-        Optional<Applicant> application = applicantRepository.findByUserIdAndJobId(UserId,jobId);
+        Optional<Applicant> application = applicantRepository.findByUserIdAndJobId(UserId, jobId);
 
-        if(application.isEmpty()){
+        if (application.isEmpty()) {
             return null;
-        }else{
+        } else {
             return ApplicantMapper.mapToApplicantDto(application.get());
         }
 
+
+    }
 
     public Boolean sendEmail(List<Integer> ids,Long jobId) {
         try {
@@ -248,16 +250,16 @@ public class ApplicantServiceImp implements ApplicantService {
                     throw new RuntimeException("Applicant not found for the id"+id);
                 }
                 String mail = applicant.getEmail();
-                String name = applicant.getName();
-
-                String subject = "Interview Invitation for " + title;
-                String body = "Dear " + name + ",\n\n"
-                        + "You have been selected for an interview for the position of " + title + " at " + companyName + ".\n"
-                        + "Please check your schedule and prepare accordingly.\n\n"
-                        + "Best regards,\n" + companyName;
 
 
-                emailService.sendEmails(mail,subject,body);
+//                String subject = "Interview Invitation for " + title;
+//                String body = "Dear " + name + ",\n\n"
+//                        + "You have been selected for an interview for the position of " + title + " at " + companyName + ".\n"
+//                        + "Please check your schedule and prepare accordingly.\n\n"
+//                        + "Best regards,\n" + companyName;
+
+                System.out.println(companyName+","+mail+","+title);
+                emailService.sendEmails(mail,companyName,title);
             }
 
             return true;

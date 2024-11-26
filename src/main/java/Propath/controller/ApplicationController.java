@@ -145,11 +145,14 @@ public class ApplicationController {
 
         Boolean SentEmail = applicantService.sendEmail(ids,jobId);
 
-        if(UpdatePreSelected){
-            return ResponseEntity.ok("Status Update Successfully");
+
+
+        if(UpdatePreSelected && SentEmail){
+            return ResponseEntity.ok("Status Update Successfully and mail sent successfully");
         }
         else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update status");
         }
+
     }
 }

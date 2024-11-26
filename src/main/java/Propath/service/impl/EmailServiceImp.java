@@ -11,6 +11,7 @@ import Propath.repository.VerficationRepository;
 import Propath.service.EmailService;
 
 import Propath.service.JwtService;
+import com.mailersend.sdk.Recipient;
 import com.mailersend.sdk.emails.Email;
 import com.mailersend.sdk.MailerSend;
 import com.mailersend.sdk.MailerSendResponse;
@@ -226,12 +227,39 @@ public class EmailServiceImp implements EmailService {
 
     }
 
-    public void sendEmails(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
+    public void sendEmails(String mail,String companyName,String title) {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo(to);
+//        message.setSubject(subject);
+//        message.setText(body);
+//        mailSender.send(message);
+
+
+        Email email = new Email();
+
+        email.setFrom("Propath", "info@propath.com");
+
+        Recipient recipient = new Recipient("Canditate",mail);
+
+        email.addRecipient(recipient.name,recipient.email);
+
+        email.setTemplateId("yzkq340w3jkgd796");
+
+
+        email.addPersonalization(recipient, "job_role",title);
+        email.addPersonalization(recipient, "company_name",companyName);
+        email.addPersonalization(recipient, "support_email", "info@propath.com");
+
+        MailerSend ms = new MailerSend();
+
+        ms.setToken("mlsn.57050f2bfdabf9e12a14a92e27ba3ec5f2eaf39bec4af2bc64917cf43f1ae94e");
+
+        try {
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println(response.messageId);
+        } catch (MailerSendException e) {
+            e.printStackTrace();
+        }
     }
 
 

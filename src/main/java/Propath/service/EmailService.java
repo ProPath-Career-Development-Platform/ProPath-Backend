@@ -14,5 +14,5 @@ public interface EmailService {
     AuthenticationResponse checkVerification(String token);
 
     void sendRegisterMailForJP(String name, String email);
-     void sendEmails(String to, String subject, String body);
+    void sendEmails(String mail,String companyName,String title);
 }
