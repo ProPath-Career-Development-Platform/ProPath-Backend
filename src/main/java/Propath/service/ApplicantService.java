@@ -25,4 +25,8 @@ public interface ApplicantService {
 
     Boolean sendEmail(List<Integer>ids,Long jobId);
 
+    Boolean checkUserAlreadyApplied(Integer userId, Long jobId);
+
+    List<ApplicantDto> getAppliedJobsByUserId(Integer userId);
+
 }

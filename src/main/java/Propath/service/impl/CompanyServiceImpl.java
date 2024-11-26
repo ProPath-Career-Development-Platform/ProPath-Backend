@@ -26,12 +26,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
-
-        private CompanyRepository companyRepository;
-        private CompanyMapper companyMapper;
-        private UserRepository userRepository;
-        private PasswordEncoder passwordEncoder;
-        private UserSubscriptionService userSubscriptionService;
+    private CompanyRepository companyRepository;
+    private CompanyMapper companyMapper;
+    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
+    private UserSubscriptionService userSubscriptionService;
 
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
@@ -156,7 +155,6 @@ public class CompanyServiceImpl implements CompanyService {
             company.setIsNew(true);
         }else{
             company = companyOptional.get();
-            company.setUser(null);
             User user = company.getUser();
             if (user != null) {
                 user.clearSensitiveDataForSettings();
@@ -344,9 +342,6 @@ public class CompanyServiceImpl implements CompanyService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Get the username of the logged-in user
 
-
-}
-
         // Find the user by email
         Optional<User> userOptional = userRepository.findByEmail(userEmail);
 
@@ -386,5 +381,3 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.countByStatus("pending");
     }
 }
-}
-
