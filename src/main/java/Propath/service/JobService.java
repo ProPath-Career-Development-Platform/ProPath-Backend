@@ -29,7 +29,6 @@ public interface JobService {
 
     CompanyDto getCompanyInfoByJobId(Long id);
 
-    List<CompanyAndJobsDto> findRelatedJobsWithCompanyByTags(String[] tags);
     List<Integer> findJobIdsByProviderId(int userId);
 
     public JobDto getJobByIdJs(Long id);
@@ -38,5 +37,6 @@ public interface JobService {
 
     List<JobDto> getAllPostedJobs();
 
+    List<JobDto> getRelatedJobsByTags(Long jobId);
 
 }

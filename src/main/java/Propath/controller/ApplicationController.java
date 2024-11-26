@@ -66,7 +66,7 @@ public class ApplicationController {
     @PostMapping("/applicant/selected")
     public ResponseEntity<List<Map<String,Object>>> getApplicantDetails(@RequestBody ApplicantRequestDto request ) {
 
-     //   List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(ids,jobId);
+        //   List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(ids,jobId);
         List<ApplicantDto> applicants = applicantService.getApplicantsByUserIds(request.getIds(), request.getJobId());
 
 
@@ -80,14 +80,14 @@ public class ApplicationController {
             application.put("id",applicant.getId());
             application.put("name",applicant.getUser().getName());
             application.put("atsScore",applicant.getAtsScore());
-           // application.put("appliedDate",applicant.getAppliedDate());
+            // application.put("appliedDate",applicant.getAppliedDate());
             application.put("status",applicant.getStatus());
-           // application.put("response",applicant.getResponse());
+            // application.put("response",applicant.getResponse());
             application.put("email",applicant.getEmail());
             application.put("seekerId",applicant.getUser().getId());
             application.put("jobId",applicant.getJob().getId());
-          //  application.put("cv", applicant.getCv());
-          //  application.put("exp","senior"); // hardcode , need to create in jobseeker table
+            //  application.put("cv", applicant.getCv());
+            //  application.put("exp","senior"); // hardcode , need to create in jobseeker table
 
             if(seekerPersonalInfo.isEmpty()){
                 application.put("proUrl", null);
@@ -137,7 +137,7 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update status");
         }
     }
-//this method is trigger when applicant will go for the interview not selected for the job.
+    //this method is trigger when applicant will go for the interview not selected for the job.
     @PutMapping("applicant/updateStatusSelected/{jobId}")
     public ResponseEntity<String> updateStatusSelected(@PathVariable Long jobId ,@RequestBody List<Integer> ids){
 

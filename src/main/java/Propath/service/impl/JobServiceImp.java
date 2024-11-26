@@ -308,21 +308,19 @@ public class JobServiceImp implements JobService {
         );
     }
     @Override
-    public List<CompanyAndJobsDto> findRelatedJobsWithCompanyByTags(String[] tags) {
-        List<Object[]> results = jobRepository.findJobsWithCompanyByTags(tags);
-        List<CompanyAndJobsDto> relatedJobsWithCompanies = new ArrayList<>();
-
-        for (Object[] row : results) {
-            Job job = (Job) row[0];
-            Company company = (Company) row[1];
-
-            CompanyAndJobsDto dto = new CompanyAndJobsDto();
-            dto.setCompany(new CompanyDto(company)); // Uses the new CompanyDto(Company company) constructor
-            dto.setJob(new JobDto(job)); // Uses the new JobDto(Job job) constructor
-
-            relatedJobsWithCompanies.add(dto);
+    public List<JobDto> getRelatedJobsByTags(Long jobId) {
+        Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("Job not found"));
+        List<String> tags = job.getTags();
+        if (tags == null || tags.isEmpty()) {
+            throw new RuntimeException("No tags found for Job ID: " + jobId);
         }
-        return relatedJobsWithCompanies;
+        List<Job> relatedJobs = jobRepository.findJobsByMatchingTags(tags.toArray(new String[0]), jobId);
+        return relatedJobs.stream().map(relatedJob -> {
+            JobDto jobDto = JobMapper.maptoJobDto(relatedJob);
+            Company company = companyRepository.findByUser(relatedJob.getUser()).orElseThrow(() -> new RuntimeException("Company not found for user with id " + relatedJob.getUser().getId()));
+            jobDto.setCompany(company);
+            return jobDto;
+        }).collect(Collectors.toList());
     }
 
 

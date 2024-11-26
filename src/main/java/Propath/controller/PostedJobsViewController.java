@@ -1,9 +1,11 @@
 package Propath.controller;
 
+import Propath.dto.ApplicantDto;
 import Propath.dto.CompanyAndJobsDto;
 import Propath.dto.CompanyDto;
 import Propath.dto.JobDto;
 import Propath.model.Job;
+import Propath.service.ApplicantService;
 import Propath.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,9 @@ public class PostedJobsViewController {
 
     @Autowired
     private JobService jobPostService;
+
+    @Autowired
+    private ApplicantService applicantService;
 
     // Get all jobs REST API
     @GetMapping("/all-jobs")
@@ -43,19 +48,51 @@ public class PostedJobsViewController {
     }
 
     // Get related jobs by tags REST API
-    @GetMapping("/related-jobs")
-    public ResponseEntity<List<CompanyAndJobsDto>> getRelatedJobs(@RequestParam List<String> tags) {
-        if (tags == null || tags.isEmpty()) {
-            return ResponseEntity.badRequest().body(Collections.emptyList());
-        }
-
-        String[] lowercaseTags = tags.stream().map(String::toLowerCase).toArray(String[]::new);
+    @GetMapping("/related-jobs/{jobId}")
+    public ResponseEntity<List<JobDto>> getRelatedJobs(@PathVariable Long jobId) {
         try {
-            List<CompanyAndJobsDto> relatedJobs = jobPostService.findRelatedJobsWithCompanyByTags(lowercaseTags);
+            List<JobDto> relatedJobs = jobPostService.getRelatedJobsByTags(jobId);
             return ResponseEntity.ok(relatedJobs);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
         }
     }
+
+    // save favorite job REST API
+//    @PostMapping("/favorite-job")
+//    public ResponseEntity<?> saveFavoriteJob(@RequestBody FavoriteJobsDto favoriteJobsDto) {
+//        try {
+//            FavoriteJobsDto savedJob = favoriteJobs.saveFavoriteJob(favoriteJobsDto);
+//            return ResponseEntity.ok(savedJob);
+//        } catch (RuntimeException ex) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("An error occurred while saving the favorite job");
+//        }
+//    }
+
+    // apply for job REST API
+    @PostMapping("/apply")
+    public ResponseEntity <ApplicantDto> saveApplication(@RequestBody ApplicantDto applicantDto){
+
+        ApplicantDto savedAppliation = applicantService.saveApplication(applicantDto);
+
+        return new ResponseEntity<>(savedAppliation,HttpStatus.OK);
+    }
+
+    // check user already applied for job REST API
+    @GetMapping("/check-applied/{userId}/{jobId}")
+    public ResponseEntity<Boolean> checkUserAlreadyApplied(@PathVariable Integer userId, @PathVariable Long jobId) {
+        Boolean isApplied = applicantService.checkUserAlreadyApplied(userId, jobId);
+        return new ResponseEntity<>(isApplied, HttpStatus.OK);
+    }
+
+    // get applied jobs by user id REST API
+    @GetMapping("/applied-jobs/{userId}")
+    public ResponseEntity<List<ApplicantDto>> getAppliedJobsByUserId(@PathVariable Integer userId) {
+        List<ApplicantDto> appliedJobs = applicantService.getAppliedJobsByUserId(userId);
+        return new ResponseEntity<>(appliedJobs, HttpStatus.OK);
+    }
+
+
 
 }
