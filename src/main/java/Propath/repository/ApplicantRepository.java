@@ -15,4 +15,10 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Long> {
     List<Applicant> findByJobIdAndStatusIn(Long jobId, List<String> statuses);
 
     Optional<Applicant> findByUserIdAndJobId(Integer jobseekerId, Long jobId);
+
+
+    List<Applicant> findByUserIdInAndJobId(List<Integer> userIds, Long jobId);
+
+    Applicant findByUserId(Integer id);
+
 }

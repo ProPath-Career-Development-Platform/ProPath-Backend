@@ -20,10 +20,8 @@ public class ApplicantMapper {
                 applicant.getAppliedDate(),
                 applicant.getStatus(),
                 applicant.getResponse(),
-                applicant.getEmail(),
-                applicant.getExp(),
-                applicant.getName(),
-                applicant.getSeekerId(),
+                applicant.getCv(),
+               applicant.getEmail(),
                 applicant.getJob(),
                 applicant.getUser()
 
@@ -39,10 +37,8 @@ public class ApplicantMapper {
                 applicantDto.getAppliedDate(),
                 applicantDto.getStatus(),
                 applicantDto.getResponse(),
+                applicantDto.getCv(),
                 applicantDto.getEmail(),
-                applicantDto.getExp(),
-                applicantDto.getName(),
-                applicantDto.getSeekerId(),
                 applicantDto.getJob(),
                 applicantDto.getUser()
 

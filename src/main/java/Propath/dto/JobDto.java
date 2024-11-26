@@ -3,7 +3,6 @@ package Propath.dto;
 import Propath.model.Company;
 import Propath.model.Job;
 import Propath.model.User;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,5 +68,6 @@ public class JobDto {
         this.user = job.getUser();
         this.company = job.getCompany();
     }
+
 
 }

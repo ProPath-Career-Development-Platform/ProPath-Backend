@@ -2,12 +2,21 @@ package Propath.service.impl;
 
 import Propath.dto.*;
 import Propath.exception.ResourceNotFoundException;
+import Propath.dto.ApplicantDto;
+import Propath.dto.CompanyDto;
+import Propath.dto.JobDto;
+
 import Propath.mapper.ApplicantMapper;
+import Propath.mapper.CompanyMapper;
 import Propath.mapper.JobMapper;
+
 import Propath.model.Applicant;
 import Propath.model.Company;
 import Propath.model.Job;
 import Propath.model.User;
+
+import Propath.model.*;
+
 import Propath.repository.ApplicantRepository;
 import Propath.repository.CompanyRepository;
 import Propath.repository.JobRepository;
@@ -33,7 +42,9 @@ public class JobServiceImp implements JobService {
     private JobRepository jobRepository;
     private UserRepository userRepository;
     private ApplicantRepository applicantRepository;
+
     private JobMapper JobMapper;
+
     private CompanyRepository companyRepository;
 
     @Override
@@ -157,6 +168,7 @@ public class JobServiceImp implements JobService {
     }
 
     @Override
+
     public JobDto updateJob(Long jobId, JobDto jobDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Assuming you store the email in the principal
@@ -195,6 +207,51 @@ public class JobServiceImp implements JobService {
 
         // Optionally, convert updatedJob to JobDto and return it
         return JobMapper.maptoJobDto(updatedJob);
+
+    }
+
+    public List<Integer> findJobIdsByProviderId(int providerId){
+
+        User user = userRepository.findById(providerId)
+                .orElseThrow(()->new RuntimeException("User not Found"));
+
+        return jobRepository.findJobIdsByProviderId(providerId);
+
+
+    }
+
+    @Override
+    public JobDto getJobByIdJs(Long id) {
+
+        Job job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job Not Found"));
+        JobDto jobDto = JobMapper.maptoJobDto(job);
+        Company company = companyRepository.findByUser(job.getUser()).orElseThrow(()-> new RuntimeException("No Company Found"));
+        jobDto.setCompany(company);
+        return jobDto;
+    }
+    @Override
+    public List<JobDto> getAllJobs() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        List<Job> jobs =  jobRepository.findAll();
+
+        return jobs.stream().map((job)-> {
+
+
+            Company company = companyRepository.findByUser(job.getUser()).orElseThrow(()->new RuntimeException("Company Id not found"));
+            JobDto jobDto = JobMapper.maptoJobDto(job);
+
+            jobDto.setCompany(company);
+            return jobDto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobDto> getAllPostedJobs() {
+        List<Job> jobs = jobRepository.findAll();
+        return jobs.stream().map((job) -> JobMapper.maptoJobDto(job)).collect(Collectors.toList());
     }
 
     @Override

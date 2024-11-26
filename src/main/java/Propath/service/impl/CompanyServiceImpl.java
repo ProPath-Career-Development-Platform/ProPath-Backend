@@ -8,6 +8,8 @@ import Propath.model.User;
 import Propath.repository.CompanyRepository;
 import Propath.repository.UserRepository;
 import Propath.service.CompanyService;
+import Propath.service.UserSubscriptionService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,16 +26,35 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
-    private CompanyRepository companyRepository;
-    private CompanyMapper companyMapper;
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+
+        private CompanyRepository companyRepository;
+        private CompanyMapper companyMapper;
+        private UserRepository userRepository;
+        private PasswordEncoder passwordEncoder;
+        private UserSubscriptionService userSubscriptionService;
 
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Get the username of the logged-in user
+
+        // Find the user by email
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+
+
+        companyDto.setUser(userOptional.get());
+
         Company company = CompanyMapper.maptoCompany(companyDto);
         Company newCompany = companyRepository.save(company);
+
+
+
 
         return CompanyMapper.maptoCompanyDto(newCompany);
     }
@@ -42,6 +63,12 @@ public class CompanyServiceImpl implements CompanyService {
     public List<CompanyDto> getALLCompanies() {
         List<Company> companies = companyRepository.findAll();
         return companies.stream().map((company) -> CompanyMapper.maptoCompanyDto(company)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CompanyDto> getAllRequests() {
+        List<Company> pendingCompanies = companyRepository.findByStatus("pending");
+        return pendingCompanies.stream().map(company -> CompanyMapper.maptoCompanyDto(company)).collect(Collectors.toList());
     }
 
     @Override
@@ -130,6 +157,12 @@ public class CompanyServiceImpl implements CompanyService {
         }else{
             company = companyOptional.get();
             company.setUser(null);
+            User user = company.getUser();
+            if (user != null) {
+                user.clearSensitiveDataForSettings();
+            }
+
+
             company.setIsNew(false);
 
 
@@ -305,6 +338,53 @@ public class CompanyServiceImpl implements CompanyService {
 
     }
 
+    @Override
+    public String getCompanyStatus() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Get the username of the logged-in user
 
 
 }
+
+        // Find the user by email
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+
+        // Find the company by user ID
+        Optional<Company> companyOptional = companyRepository.findByUserId(userOptional.get().getId());
+
+        if (companyOptional.isEmpty()) {
+            return "none";
+        } else {
+
+            if (companyOptional.get().getStatus().equals("active") || companyOptional.get().getStatus().equals("pending")) {
+                return companyOptional.get().getStatus();
+            } else {
+                return "error";
+            }
+
+        }
+    }
+
+    @Override
+    public CompanyDto approveCompany(int id) {
+        Company company = companyRepository.findByUserId(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + id));
+
+        company.setStatus("approve");
+        Company updatedCompany = companyRepository.save(company);
+        return CompanyMapper.maptoCompanyDto(updatedCompany);
+    }
+
+    @Override
+    public Integer getPendingRequestsCount() {
+        return companyRepository.countByStatus("pending");
+    }
+}
+}
+

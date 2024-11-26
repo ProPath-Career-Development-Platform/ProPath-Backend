@@ -6,7 +6,10 @@ import Propath.model.Job;
 import java.util.List;
 
 public interface JobService {
-    
+
+
+
+
     JobDto saveJob(JobDto jobDto);
 
     List<JobDto> getJobs();
@@ -16,7 +19,9 @@ public interface JobService {
 
     Boolean setExpireJob(Long id);
 
+
     JobDto updateJob(Long id,JobDto jobDto);
+
 
     JobDto getPostJobById(Long postId);
 
@@ -25,6 +30,13 @@ public interface JobService {
     CompanyDto getCompanyInfoByJobId(Long id);
 
     List<CompanyAndJobsDto> findRelatedJobsWithCompanyByTags(String[] tags);
+    List<Integer> findJobIdsByProviderId(int userId);
+
+    public JobDto getJobByIdJs(Long id);
+
+    List<JobDto> getAllJobs();
+
+    List<JobDto> getAllPostedJobs();
 
 
 }

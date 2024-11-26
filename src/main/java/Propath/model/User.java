@@ -92,10 +92,29 @@ public class User implements UserDetails{
         this.role = role;
     }
 
+    public void setUsername(String username){
+        this.username=username;
+    }
     @Column(name = "password")
     private String password;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+    public void clearSensitiveData() {
+        this.username = null;
+        this.email = null;
+        this.password = null;
+        this.role = null;
+    }
+
+    public void clearSensitiveDataForSettings() {
+      //  this.username = null;
+      //  this.email = null;
+        this.password = null;
+       // this.role = null;
+    }
+
+
 
 }

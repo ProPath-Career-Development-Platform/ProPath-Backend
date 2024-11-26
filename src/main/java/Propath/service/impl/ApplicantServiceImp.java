@@ -3,12 +3,15 @@ package Propath.service.impl;
 import Propath.dto.ApplicantDto;
 import Propath.mapper.ApplicantMapper;
 import Propath.model.Applicant;
+import Propath.model.Company;
 import Propath.model.Job;
 import Propath.model.User;
 import Propath.repository.ApplicantRepository;
+import Propath.repository.CompanyRepository;
 import Propath.repository.JobRepository;
 import Propath.repository.UserRepository;
 import Propath.service.ApplicantService;
+import Propath.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +29,8 @@ public class ApplicantServiceImp implements ApplicantService {
     private ApplicantRepository applicantRepository;
     private UserRepository userRepository;
     private JobRepository jobRepository;
+    private CompanyRepository companyRepository;
+    private EmailService emailService;
 
     @Override
     public List<ApplicantDto> getApplicants(Long jobId) {
@@ -48,50 +53,20 @@ public class ApplicantServiceImp implements ApplicantService {
         List<String> statuses = Arrays.asList("pending", "preSelected");
         List<Applicant> applicants = applicantRepository.findByJobIdAndStatusIn(jobId,statuses);
 
-        // Map to ApplicantDto and set email
-        return applicants.stream()
-                .map(applicant -> {
-                    ApplicantDto dto = ApplicantMapper.mapToApplicantDto(applicant);
-                   dto.setEmail(applicant.getUser().getEmail());
-                   dto.setExp("Senior");
-                   dto.setName(applicant.getUser().getName());
-                   dto.setSeekerId(applicant.getUser().getId());
-                   dto.setJob(null);
-                   dto.setUser(null);
-                   // Set the email from the User
-                    return dto;
-                })
+
+
+        return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
 
     }
 
     @Override
-    public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds) {
-        List<Applicant> applicants = applicantRepository.findAllByUserIdIn(userIds);
-        return applicants.stream()
-                .map(applicant -> {
-                    ApplicantDto dto = ApplicantMapper.mapToApplicantDto(applicant);
+    public List<ApplicantDto> getApplicantsByUserIds(List<Integer> userIds, Long jobId) {
+        List<Applicant> applicants = applicantRepository.findByUserIdInAndJobId(userIds,jobId);
 
-                    // Null checks for the User object
-                    if (applicant.getUser() != null) {
-                        dto.setEmail(applicant.getUser().getEmail());
-                        dto.setName(applicant.getUser().getName());
-                        dto.setSeekerId(applicant.getUser().getId());
-                    } else {
-                        // Handle case where user is null, if necessary
-                        dto.setEmail(null);
-                        dto.setName(null);
-                      //  dto.setSeekerId(null);
-                    }
-
-                    // Optionally set experience based on applicant data
-                    dto.setExp("Senior"); // Replace this logic if needed
-                    dto.setJob(null); // Set according to your requirements
-                    dto.setUser(null); // Set according to your requirements
-
-                    return dto;
-                })
+        return applicants .stream().map(ApplicantMapper::mapToApplicantDto)
                 .collect(Collectors.toList());
+
     }
 
 
@@ -148,6 +123,150 @@ public class ApplicantServiceImp implements ApplicantService {
         }catch (RuntimeException e){
             return false;
         }
+
+    }
+
+    @Override
+    public Boolean updateStatusToPreSelected(List<Integer> ids, Long jobId) {
+        try {
+
+            Optional<Job> job = jobRepository.findById(jobId);
+            if (job.isEmpty()) {
+                throw new RuntimeException("Job not found");
+            }
+
+            for (Integer id : ids) {
+
+                Optional<User> user = userRepository.findById(id);
+                if (user.isEmpty()) {
+                    throw new RuntimeException("User with ID " + id + " not found");
+                }
+
+
+                Applicant applicant = applicantRepository.findByUserIdAndJobId(id, jobId)
+                        .orElseThrow(() -> new RuntimeException("Application not found for userId: " + id + " and jobId: " + jobId));
+
+
+                applicant.setStatus("preSelected");
+                applicantRepository.save(applicant);
+            }
+            return true;
+
+        } catch (RuntimeException e) {
+            // Log the exception
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean updateStatusToSelected(List<Integer> ids, Long jobId) {
+
+        try {
+
+            Optional<Job> job = jobRepository.findById(jobId);
+            if (job.isEmpty()) {
+                throw new RuntimeException("Job not found");
+            }
+
+            for (Integer id : ids) {
+
+                Optional<User> user = userRepository.findById(id);
+                if (user.isEmpty()) {
+                    throw new RuntimeException("User with ID " + id + " not found");
+                }
+
+
+                Applicant applicant = applicantRepository.findByUserIdAndJobId(id, jobId)
+                        .orElseThrow(() -> new RuntimeException("Application not found for userId: " + id + " and jobId: " + jobId));
+
+
+                applicant.setStatus("Selected");
+                applicantRepository.save(applicant);
+            }
+            return true;
+
+        } catch (RuntimeException e) {
+            // Log the exception
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+
+    public ApplicantDto getFormResponse(Long jobId, Integer UserId){
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<User> jobSeeker = userRepository.findById(UserId);
+
+        if(jobSeeker.isEmpty()){
+            throw new RuntimeException("job seeker id not own");
+
+        }
+
+        Optional<Applicant> application = applicantRepository.findByUserIdAndJobId(UserId,jobId);
+
+        if(application.isEmpty()){
+            return null;
+        }else{
+            return ApplicantMapper.mapToApplicantDto(application.get());
+        }
+
+
+    public Boolean sendEmail(List<Integer> ids,Long jobId) {
+        try {
+
+            Job job = jobRepository.findById(jobId).orElseThrow(()->new RuntimeException("job is not found"));
+
+            String title= job.getJobTitle();
+            User user = job.getUser();
+            String companyName;
+            try{
+
+                Optional<Company> optionalCompany = companyRepository.findByUserId(user.getId());
+
+                // Get the company from the Optional
+                Company company = optionalCompany.orElseThrow(() ->
+                        new RuntimeException("Company not found for the user"));
+                companyName = company.getCompanyName();
+            }catch(Exception e){
+                throw new RuntimeException("Error retrieving the company", e);
+            }
+
+
+            for(Integer id:ids){
+                Applicant applicant = applicantRepository.findByUserId(id);
+
+                if(applicant==null){
+                    throw new RuntimeException("Applicant not found for the id"+id);
+                }
+                String mail = applicant.getEmail();
+                String name = applicant.getName();
+
+                String subject = "Interview Invitation for " + title;
+                String body = "Dear " + name + ",\n\n"
+                        + "You have been selected for an interview for the position of " + title + " at " + companyName + ".\n"
+                        + "Please check your schedule and prepare accordingly.\n\n"
+                        + "Best regards,\n" + companyName;
+
+
+                emailService.sendEmails(mail,subject,body);
+            }
+
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while sending emails",e);
+
+        }
+
+
 
     }
 }

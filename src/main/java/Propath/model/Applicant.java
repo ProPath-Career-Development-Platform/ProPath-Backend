@@ -33,22 +33,16 @@ public class Applicant {
     @Column(columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate appliedDate;
 
+
     private String status;
 
     @Column(columnDefinition = "TEXT" , nullable = true)
     private String response;
 
-    @Transient
+    private String cv;
+
+
     private String email;
-
-    @Transient
-    private String exp;
-
-    @Transient
-    private String name;
-
-    @Transient
-    private int seekerId;
 
     @ManyToOne
     @JoinColumn(name = "job_id", referencedColumnName = "id")

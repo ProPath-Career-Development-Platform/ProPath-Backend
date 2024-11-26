@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Component
 public class JobMapper {
 
+
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository; // Add company repository here
 
@@ -23,6 +24,7 @@ public class JobMapper {
         this.jobRepository = jobRepository;
         this.companyRepository = companyRepository; // Inject company repository
     }
+
 
     public JobDto maptoJobDto(Job job){
         Optional<Company> companyOptional = companyRepository.findByUserId(job.getUser().getId());
