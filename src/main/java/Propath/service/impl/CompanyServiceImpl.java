@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
+
         private CompanyRepository companyRepository;
         private CompanyMapper companyMapper;
         private UserRepository userRepository;
@@ -150,11 +151,12 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company;
         if (companyOptional.isEmpty()) {
-          //  throw new RuntimeException("Company not found");
-             company = new Company();
+            //  throw new RuntimeException("Company not found");
+            company = new Company();
             company.setIsNew(true);
         }else{
-             company = companyOptional.get();
+            company = companyOptional.get();
+            company.setUser(null);
             User user = company.getUser();
             if (user != null) {
                 user.clearSensitiveDataForSettings();
@@ -342,6 +344,9 @@ public class CompanyServiceImpl implements CompanyService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Get the username of the logged-in user
 
+
+}
+
         // Find the user by email
         Optional<User> userOptional = userRepository.findByEmail(userEmail);
 
@@ -381,3 +386,5 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.countByStatus("pending");
     }
 }
+}
+

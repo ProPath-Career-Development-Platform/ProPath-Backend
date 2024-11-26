@@ -18,6 +18,15 @@ public interface JobRepository extends JpaRepository<Job,Long> {
     Optional<Job> findByIdAndDeleteFalse(Long id);
 
 
+    @Query(value = "SELECT j.*, c.* FROM job j " +
+            "JOIN company c ON j.providerid = c.user_id " +
+            "WHERE EXISTS (" +
+            "SELECT 1 FROM UNNEST(j.tags) tag WHERE LOWER(tag) = ANY(:tags))",
+            nativeQuery = true)
+    List<Object[]> findJobsWithCompanyByTags(@Param("tags") String[] tags);
+
+
+
 
 
     @Query("SELECT j.id FROM Job j WHERE j.user.id = :userId")
@@ -28,4 +37,5 @@ public interface JobRepository extends JpaRepository<Job,Long> {
     List<Job> findByStatus(String active);
 
     List<Job> findByUserAndStatus(User user, String active);
+
 }
