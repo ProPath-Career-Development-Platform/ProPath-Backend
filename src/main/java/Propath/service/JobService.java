@@ -1,7 +1,7 @@
 package Propath.service;
 
-import Propath.dto.ApplicantDto;
-import Propath.dto.JobDto;
+import Propath.dto.*;
+import Propath.model.Job;
 
 import java.util.List;
 
@@ -22,6 +22,13 @@ public interface JobService {
 
     JobDto updateJob(Long id,JobDto jobDto);
 
+
+    JobDto getPostJobById(Long postId);
+
+    List<JobDto> getAllPostJobs();
+
+    CompanyDto getCompanyInfoByJobId(Long id);
+
     List<Integer> findJobIdsByProviderId(int userId);
 
     public JobDto getJobByIdJs(Long id);
@@ -30,5 +37,6 @@ public interface JobService {
 
     List<JobDto> getAllPostedJobs();
 
+    List<JobDto> getRelatedJobsByTags(Long jobId);
 
 }

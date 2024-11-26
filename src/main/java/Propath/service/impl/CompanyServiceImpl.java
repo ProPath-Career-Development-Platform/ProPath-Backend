@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
-        private CompanyRepository companyRepository;
-        private CompanyMapper companyMapper;
-        private UserRepository userRepository;
-        private PasswordEncoder passwordEncoder;
-        private UserSubscriptionService userSubscriptionService;
+    private CompanyRepository companyRepository;
+    private CompanyMapper companyMapper;
+    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
+    private UserSubscriptionService userSubscriptionService;
 
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
@@ -150,11 +150,11 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company;
         if (companyOptional.isEmpty()) {
-          //  throw new RuntimeException("Company not found");
-             company = new Company();
+            //  throw new RuntimeException("Company not found");
+            company = new Company();
             company.setIsNew(true);
         }else{
-             company = companyOptional.get();
+            company = companyOptional.get();
             User user = company.getUser();
             if (user != null) {
                 user.clearSensitiveDataForSettings();
