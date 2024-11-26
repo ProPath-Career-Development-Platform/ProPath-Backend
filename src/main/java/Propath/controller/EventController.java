@@ -1,5 +1,6 @@
 package Propath.controller;
 
+import Propath.dto.EventDto;
 import Propath.dto.JobSeekerEventDto;
 import Propath.service.JobSeekerEventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,9 @@ public class EventController {
         return ResponseEntity.ok(output);
     }
 
+    @GetMapping("getFullEventDetails")
+    public List<EventDto> getFullEventDetails(){
+        return jobSeekerEventService.getFullEventDetails();
+    }
 
 }
