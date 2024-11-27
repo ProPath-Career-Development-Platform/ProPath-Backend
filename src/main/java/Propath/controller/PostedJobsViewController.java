@@ -1,11 +1,9 @@
 package Propath.controller;
 
-import Propath.dto.ApplicantDto;
-import Propath.dto.CompanyAndJobsDto;
-import Propath.dto.CompanyDto;
-import Propath.dto.JobDto;
+import Propath.dto.*;
 import Propath.model.Job;
 import Propath.service.ApplicantService;
+import Propath.service.InterviewService;
 import Propath.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +23,9 @@ public class PostedJobsViewController {
 
     @Autowired
     private ApplicantService applicantService;
+
+    @Autowired
+    private InterviewService interviewService;
 
     // Get all jobs REST API
     @GetMapping("/all-jobs")
@@ -91,6 +92,27 @@ public class PostedJobsViewController {
     public ResponseEntity<List<ApplicantDto>> getAppliedJobsByUserId(@PathVariable Integer userId) {
         List<ApplicantDto> appliedJobs = applicantService.getAppliedJobsByUserId(userId);
         return new ResponseEntity<>(appliedJobs, HttpStatus.OK);
+    }
+
+    // get selected or pre-selected applicants REST API
+    @GetMapping("/selected-applicants")
+    public ResponseEntity<List<ApplicantDto>> getSelectedOrPreSelectedApplicants() {
+        List<ApplicantDto> applicants = applicantService.getSelectedOrPreSelectedApplicants();
+        return new ResponseEntity<>(applicants, HttpStatus.OK);
+    }
+
+    // get interview details by job id REST API
+    @GetMapping("/interviews/{jobId}")
+    public ResponseEntity<List<InterviewDto>> getInterviewsByJobId(@PathVariable Long jobId) {
+        List<InterviewDto> interviews = interviewService.findInterviewsByJobId(jobId);
+        return ResponseEntity.ok(interviews);
+    }
+
+    // get interviews for selected or pre-selected applicants REST API
+    @GetMapping("/selected-preselected-interviews")
+    public ResponseEntity<List<InterviewDto>> getInterviewsForSelectedOrPreSelectedApplicants() {
+        List<InterviewDto> interviews = applicantService.getInterviewsForSelectedOrPreSelectedApplicants();
+        return ResponseEntity.ok(interviews);
     }
 
 

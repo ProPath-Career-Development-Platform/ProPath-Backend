@@ -84,6 +84,13 @@ public class InterviewServiceImp implements InterviewService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<InterviewDto> findInterviewsByJobId(Long jobId) {
+        return interviewRepository.findByJobId(jobId).stream()
+                .map(InterviewMapper::mapToInterviewDto)
+                .collect(Collectors.toList());
+    }
+
 
 
 }
