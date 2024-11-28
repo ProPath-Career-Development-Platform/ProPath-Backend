@@ -24,6 +24,7 @@ public class ApplicantDto {
     private String response;
     private String cv;
     private String email;
+    private String cvText;
     private Job job;
     private User user;
 

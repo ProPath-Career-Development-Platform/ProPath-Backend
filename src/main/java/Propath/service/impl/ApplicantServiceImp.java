@@ -192,9 +192,9 @@ public class ApplicantServiceImp implements ApplicantService {
     }
 
     @Override
-    public ApplicantDto getFormResponse(Long jobId, Integer userId) {
-        return null;
-    }
+//    public ApplicantDto getFormResponse(Long jobId, Integer userId) {
+//        return null;
+//    }
 
 
     public ApplicantDto getFormResponse(Long jobId, Integer UserId) {
@@ -227,12 +227,12 @@ public class ApplicantServiceImp implements ApplicantService {
     public Boolean sendEmail(List<Integer> ids,Long jobId) {
         try {
 
-            Job job = jobRepository.findById(jobId).orElseThrow(()->new RuntimeException("job is not found"));
+            Job job = jobRepository.findById(jobId).orElseThrow(() -> new RuntimeException("job is not found"));
 
-            String title= job.getJobTitle();
+            String title = job.getJobTitle();
             User user = job.getUser();
             String companyName;
-            try{
+            try {
 
                 Optional<Company> optionalCompany = companyRepository.findByUserId(user.getId());
 
@@ -240,16 +240,16 @@ public class ApplicantServiceImp implements ApplicantService {
                 Company company = optionalCompany.orElseThrow(() ->
                         new RuntimeException("Company not found for the user"));
                 companyName = company.getCompanyName();
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException("Error retrieving the company", e);
             }
 
 
-            for(Integer id:ids){
+            for (Integer id : ids) {
                 Applicant applicant = applicantRepository.findByUserId(id);
 
-                if(applicant==null){
-                    throw new RuntimeException("Applicant not found for the id"+id);
+                if (applicant == null) {
+                    throw new RuntimeException("Applicant not found for the id" + id);
                 }
                 String mail = applicant.getEmail();
 
@@ -260,31 +260,32 @@ public class ApplicantServiceImp implements ApplicantService {
 //                        + "Please check your schedule and prepare accordingly.\n\n"
 //                        + "Best regards,\n" + companyName;
 
-                System.out.println(companyName+","+mail+","+title);
-                emailService.sendEmails(mail,companyName,title);
+                System.out.println(companyName + "," + mail + "," + title);
+                emailService.sendEmails(mail, companyName, title);
             }
 
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("Error while sending emails",e);
-
-
-    @Override
-    public Boolean checkUserAlreadyApplied(Integer userId, Long jobId) {
-        return applicantRepository.findByUserIdAndJobId(userId, jobId).isPresent();
+            throw new RuntimeException("Error while sending emails", e);
+        }
     }
 
-    @Override
-    public List<ApplicantDto> getAppliedJobsByUserId(Integer userId) {
-        // Use findAllByUserIdIn with a single user ID in a list
-        List<Applicant> applicants = applicantRepository.findAllByUserIdIn(Collections.singletonList(userId));
-        return applicants.stream()
-                .map(ApplicantMapper::mapToApplicantDto)
-                .collect(Collectors.toList());
-    }
+            @Override
+            public Boolean checkUserAlreadyApplied (Integer userId, Long jobId){
+                return applicantRepository.findByUserIdAndJobId(userId, jobId).isPresent();
+            }
+
+            @Override
+            public List<ApplicantDto> getAppliedJobsByUserId (Integer userId){
+                // Use findAllByUserIdIn with a single user ID in a list
+                List<Applicant> applicants = applicantRepository.findAllByUserIdIn(Collections.singletonList(userId));
+                return applicants.stream()
+                        .map(ApplicantMapper::mapToApplicantDto)
+                        .collect(Collectors.toList());
+            }
 
 
-}
+        }
 
 //    @Override
 //
@@ -363,3 +364,4 @@ public class ApplicantServiceImp implements ApplicantService {
 //
 //        }
 //    }
+

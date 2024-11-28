@@ -237,9 +237,11 @@ public class EmailServiceImp implements EmailService {
 
         Email email = new Email();
 
-        email.setFrom("Propath", "info@propath.com");
+        email.setFrom("Propath", "test@trial-jy7zpl9kpqr45vx6.mlsender.net");
 
-        Recipient recipient = new Recipient("Canditate",mail);
+        email.setSubject("Interview Invitation from "+companyName);
+
+        Recipient recipient = new Recipient("Candidate",mail);
 
         email.addRecipient(recipient.name,recipient.email);
 
@@ -248,7 +250,7 @@ public class EmailServiceImp implements EmailService {
 
         email.addPersonalization(recipient, "job_role",title);
         email.addPersonalization(recipient, "company_name",companyName);
-        email.addPersonalization(recipient, "support_email", "info@propath.com");
+        email.addPersonalization(recipient, "support_email", "test@trial-jy7zpl9kpqr45vx6.mlsender.net");
 
         MailerSend ms = new MailerSend();
 
