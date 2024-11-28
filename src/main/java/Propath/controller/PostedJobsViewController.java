@@ -115,6 +115,12 @@ public class PostedJobsViewController {
         return ResponseEntity.ok(interviews);
     }
 
+    // update interview REST API
+    @PutMapping("/update-interview/{interviewId}")
+    public ResponseEntity<InterviewDto> updateInterview(@PathVariable Long interviewId, @RequestBody InterviewDto interviewDto) {
+        InterviewDto updatedInterview = interviewService.updateInterview(interviewId, interviewDto);
+        return ResponseEntity.ok(updatedInterview);
+    }
 
 
 }

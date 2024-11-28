@@ -11,4 +11,6 @@ public interface InterviewService {
     List<InterviewDto> findInterviewsByJobIds(List<Integer> jobIds);
 
     List<InterviewDto> findInterviewsByJobId(Long jobId);
+
+    InterviewDto updateInterview(Long interViewId, InterviewDto interviewDto);
 }
