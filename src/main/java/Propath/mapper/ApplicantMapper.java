@@ -22,6 +22,7 @@ public class ApplicantMapper {
                 applicant.getResponse(),
                 applicant.getCv(),
                applicant.getEmail(),
+                applicant.getCvText(),
                 applicant.getJob(),
                 applicant.getUser()
 
@@ -39,6 +40,7 @@ public class ApplicantMapper {
                 applicantDto.getResponse(),
                 applicantDto.getCv(),
                 applicantDto.getEmail(),
+                applicantDto.getCvText(),
                 applicantDto.getJob(),
                 applicantDto.getUser()
 
