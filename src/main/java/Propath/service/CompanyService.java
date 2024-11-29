@@ -37,4 +37,6 @@ public interface CompanyService {
     CompanyDto approveCompany(int id);
 
     Integer getPendingRequestsCount();
+
+    Boolean UpdateSocial(CompanyDto companyDto);
 }

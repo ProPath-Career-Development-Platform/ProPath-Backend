@@ -1,15 +1,18 @@
 package Propath.controller;
 
-import Propath.dto.ApplicantDto;
-import Propath.dto.CompanyAndJobsDto;
-import Propath.dto.CompanyDto;
-import Propath.dto.JobDto;
+import Propath.dto.*;
 import Propath.model.Job;
+import Propath.model.User;
+import Propath.repository.UserRepository;
 import Propath.service.ApplicantService;
+import Propath.service.FavoritesJobsService;
+import Propath.service.InterviewService;
 import Propath.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -25,6 +28,15 @@ public class PostedJobsViewController {
 
     @Autowired
     private ApplicantService applicantService;
+
+    @Autowired
+    private InterviewService interviewService;
+
+    @Autowired
+    private FavoritesJobsService favoritesJobsService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // Get all jobs REST API
     @GetMapping("/all-jobs")
@@ -58,17 +70,57 @@ public class PostedJobsViewController {
         }
     }
 
-    // save favorite job REST API
-//    @PostMapping("/favorite-job")
-//    public ResponseEntity<?> saveFavoriteJob(@RequestBody FavoriteJobsDto favoriteJobsDto) {
-//        try {
-//            FavoriteJobsDto savedJob = favoriteJobs.saveFavoriteJob(favoriteJobsDto);
-//            return ResponseEntity.ok(savedJob);
-//        } catch (RuntimeException ex) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("An error occurred while saving the favorite job");
-//        }
-//    }
+    // save Favorite job REST API
+    @PostMapping("/save-favorite")
+    public ResponseEntity<Boolean> saveFavoriteJob(@RequestBody FavoritesJobsDto favoritesJobsDto) {
+        // Extract details from DTO
+        Long jobId = favoritesJobsDto.getJobId();
+        Long companyId = favoritesJobsDto.getCompanyId();
+        Long userId = favoritesJobsDto.getUserId();
+
+        // Call the service to save favorite job
+        favoritesJobsService.saveFavoritesJobs(jobId, companyId, userId);
+
+        return ResponseEntity.ok(true);
+    }
+
+    // remove Favorite job REST API
+    @DeleteMapping("/remove-favorite")    //localhost:8080/jobseeker/remove-favorite?jobId=8&companyId=2
+    public ResponseEntity<String> removeFavoriteJob(@RequestParam Long jobId, @RequestParam Long companyId) {
+        // Get the authenticated user's email
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        // Find the user
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Error: User is not found."));
+
+        // Call the service to remove the favorite job
+        favoritesJobsService.removeFavoriteJob(jobId, companyId, (long) user.getId());
+
+        return ResponseEntity.ok("Job removed from favorites.");
+    }
+
+    // get favorite jobs REST API
+    @GetMapping("/favorites")
+    public ResponseEntity<List<FavoritesJobsDto>> getFavoriteJobs() {
+        // Get the authenticated user's email
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        // Find the user
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Error: User is not found."));
+
+        // Get the list of favorite jobs
+        List<FavoritesJobsDto> favoriteJobs = favoritesJobsService.getFavoriteJobs((long) user.getId());
+
+        return ResponseEntity.ok(favoriteJobs);
+    }
+
+
+
+
 
     // apply for job REST API
     @PostMapping("/apply")
@@ -93,6 +145,33 @@ public class PostedJobsViewController {
         return new ResponseEntity<>(appliedJobs, HttpStatus.OK);
     }
 
+    // get selected or pre-selected applicants REST API
+    @GetMapping("/selected-applicants")
+    public ResponseEntity<List<ApplicantDto>> getSelectedOrPreSelectedApplicants() {
+        List<ApplicantDto> applicants = applicantService.getSelectedOrPreSelectedApplicants();
+        return new ResponseEntity<>(applicants, HttpStatus.OK);
+    }
+
+    // get interview details by job id REST API
+    @GetMapping("/interviews/{jobId}")
+    public ResponseEntity<List<InterviewDto>> getInterviewsByJobId(@PathVariable Long jobId) {
+        List<InterviewDto> interviews = interviewService.findInterviewsByJobId(jobId);
+        return ResponseEntity.ok(interviews);
+    }
+
+    // get interviews for selected or pre-selected applicants REST API
+    @GetMapping("/selected-preselected-interviews")
+    public ResponseEntity<List<InterviewDto>> getInterviewsForSelectedOrPreSelectedApplicants() {
+        List<InterviewDto> interviews = applicantService.getInterviewsForSelectedOrPreSelectedApplicants();
+        return ResponseEntity.ok(interviews);
+    }
+
+    // update interview REST API
+    @PutMapping("/update-interview/{interviewId}")
+    public ResponseEntity<InterviewDto> updateInterview(@PathVariable Long interviewId, @RequestBody InterviewDto interviewDto) {
+        InterviewDto updatedInterview = interviewService.updateInterview(interviewId, interviewDto);
+        return ResponseEntity.ok(updatedInterview);
+    }
 
 
 }
