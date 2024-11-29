@@ -39,4 +39,5 @@ public interface JobService {
 
     List<JobDto> getRelatedJobsByTags(Long jobId);
 
+    List<JobDto> getActiveJobs();
 }

@@ -31,6 +31,10 @@ public class Company {
     private String location;
     private String contactNumber;
     private String email;
+    private String xUrl;
+    private String fbUrl;
+    private String linkedinUrl;
+    private String youtubeUrl;
     @Transient
     private String pwd;
     @Transient

@@ -77,6 +77,18 @@ public class CompanyController {
         }
     }
 
+    @PutMapping("/settings/social")
+    public ResponseEntity<Boolean> UpdateSocial(@RequestBody CompanyDto companyDto){
+
+        Boolean update = companyService.UpdateSocial(companyDto);
+
+        if (update) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+    }
+
     @GetMapping("/company")
     public ResponseEntity<CompanyDto> getComapnyInfo(){
 

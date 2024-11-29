@@ -29,6 +29,10 @@ public class CompanyDto {
     private String location;
     private String contactNumber;
     private String email;
+    private String xUrl;
+    private String fbUrl;
+    private String linkedinUrl;
+    private String youtubeUrl;
     private String pwd;
     private String newPwd;
     private Boolean isNew;
@@ -49,6 +53,10 @@ public class CompanyDto {
         this.location = company.getLocation();
         this.contactNumber = company.getContactNumber();
         this.email = company.getEmail();
+        this.xUrl = company.getXUrl();
+        this.fbUrl = company.getFbUrl();
+        this.youtubeUrl = company.getYoutubeUrl();
+        this.linkedinUrl = company.getLinkedinUrl();
         this.pwd = company.getPwd();
         this.newPwd = company.getNewPwd();
         this.isNew = company.getIsNew();

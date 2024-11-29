@@ -20,4 +20,6 @@ public interface EventService {
     List<JobSeekerEventDto> getRegisteredusers(Long id);
 
   List<EventDto> getAllPostedEvent();
+
+    List<EventDto> getActveEventsWithUserId();
 }
