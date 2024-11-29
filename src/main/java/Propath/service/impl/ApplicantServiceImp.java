@@ -1,6 +1,7 @@
 package Propath.service.impl;
 
 import Propath.dto.ApplicantDto;
+import Propath.dto.InterviewDto;
 import Propath.mapper.ApplicantMapper;
 import Propath.model.Applicant;
 import Propath.model.Company;
@@ -12,6 +13,7 @@ import Propath.repository.JobRepository;
 import Propath.repository.UserRepository;
 import Propath.service.ApplicantService;
 import Propath.service.EmailService;
+import Propath.service.InterviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +34,7 @@ public class ApplicantServiceImp implements ApplicantService {
     private JobRepository jobRepository;
     private CompanyRepository companyRepository;
     private EmailService emailService;
+    private final InterviewService interviewService;
 
     @Override
     public List<ApplicantDto> getApplicants(Long jobId) {
@@ -283,6 +286,27 @@ public class ApplicantServiceImp implements ApplicantService {
                         .map(ApplicantMapper::mapToApplicantDto)
                         .collect(Collectors.toList());
             }
+
+    @Override
+    public List<ApplicantDto> getSelectedOrPreSelectedApplicants() {
+        List<String> statuses = Arrays.asList("preSelected", "selected");
+        List<Applicant> applicants = applicantRepository.findByStatusIn(statuses);
+        return applicants.stream()
+                .map(ApplicantMapper::mapToApplicantDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<InterviewDto> getInterviewsForSelectedOrPreSelectedApplicants() {
+        List<String> statuses = Arrays.asList("preSelected", "selected");
+        List<Applicant> applicants = applicantRepository.findByStatusIn(statuses);
+        List<Long> jobIds = applicants.stream()
+                .map(applicant -> applicant.getJob().getId())
+                .distinct()
+                .collect(Collectors.toList());
+        return jobIds.stream()
+                .flatMap(jobId -> interviewService.findInterviewsByJobId(jobId).stream())
+                .collect(Collectors.toList());
+    }
 
 
         }

@@ -84,6 +84,25 @@ public class InterviewServiceImp implements InterviewService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<InterviewDto> findInterviewsByJobId(Long jobId) {
+        return interviewRepository.findByJobId(jobId).stream()
+                .map(InterviewMapper::mapToInterviewDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public InterviewDto updateInterview(Long interViewId, InterviewDto interviewDto) {
+        Interview interview = interviewRepository.findById(interViewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Interview not found"));
+
+        interview.setUser(userRepository.findById(interviewDto.getUser().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found")));
+
+        interviewRepository.save(interview);
+
+        return InterviewMapper.mapToInterviewDto(interview);
+    }
 
 
 }

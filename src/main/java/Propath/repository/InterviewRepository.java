@@ -9,4 +9,6 @@ import java.util.List;
 public interface InterviewRepository extends JpaRepository<Interview ,Long> {
 
     List<Interview> findByJobIdIn(List<Integer> jobIds);
+
+    List<Interview> findByJobId(Long jobId);
 }
