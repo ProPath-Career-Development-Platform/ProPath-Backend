@@ -1,21 +1,15 @@
 package Propath.service.impl;
 
-import Propath.dto.*;
 import Propath.exception.ResourceNotFoundException;
-import Propath.dto.ApplicantDto;
 import Propath.dto.CompanyDto;
 import Propath.dto.JobDto;
 
-import Propath.mapper.ApplicantMapper;
-import Propath.mapper.CompanyMapper;
 import Propath.mapper.JobMapper;
 
 import Propath.model.Applicant;
 import Propath.model.Company;
 import Propath.model.Job;
 import Propath.model.User;
-
-import Propath.model.*;
 
 import Propath.repository.ApplicantRepository;
 import Propath.repository.CompanyRepository;
@@ -27,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -302,6 +295,10 @@ public class JobServiceImp implements JobService {
                 company.getLocation(),
                 company.getContactNumber(),
                 company.getEmail(),
+                company.getXUrl(),
+                company.getFbUrl(),
+                company.getLinkedinUrl(),
+                company.getYoutubeUrl(),
                 null,        // pwd, set to null for security
                 null,        // newPwd, set to null for security
                 company.getIsNew(),
@@ -323,6 +320,39 @@ public class JobServiceImp implements JobService {
             jobDto.setCompany(company);
             return jobDto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JobDto> getActiveJobs(){
+
+        // Get the currently authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+
+        List<Job> jobs = jobRepository.findByUserAndStatus(user,"active");
+
+        return jobs.stream()
+                .map(job-> {
+
+                    JobDto dto = JobMapper.maptoJobDto(job);
+
+                    //getApplicant count
+                    List<String> statuses = Arrays.asList("pending", "preSelected","selected");
+                    List<Applicant> applicant = applicantRepository.findByJobIdAndStatusIn(dto.getId(),statuses);
+
+                    dto.setApplicantCount((Integer) applicant.size());
+                    return dto;
+
+                })
+                .collect(Collectors.toList());
+
+
     }
 
 

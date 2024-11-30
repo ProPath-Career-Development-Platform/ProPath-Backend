@@ -288,6 +288,58 @@ public class JobProviderController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/analysis/job/barchart")
+    public ResponseEntity<List<Map<String,Object>>> GetActiveJobs(){
+
+        List<JobDto> jobs = jobService.getActiveJobs();
+
+        List<Map<String, Object>> b_jobs = new ArrayList<>();
+
+        for(JobDto jobDto : jobs){
+
+            Map<String, Object> job = new HashMap<>();
+
+            job.put("jobId", jobDto.getId());
+            job.put("jobTitle", jobDto.getJobTitle());
+            job.put("jobApplicantCount", jobDto.getApplicantCount());
+
+            b_jobs.add(job);
+        }
+
+        return new ResponseEntity<>(b_jobs,HttpStatus.OK);
+
+
+
+    }
+
+    @GetMapping("/analysis/event/barchart")
+    public ResponseEntity<List<Map<String,Object>>> GetActiveEvents(){
+
+        List<EventDto> eventDtos = eventService.getActveEventsWithUserId();
+
+        List<Map<String, Object>> b_events = new ArrayList<>();
+
+        for(EventDto eventDto : eventDtos){
+
+            Map<String, Object> event = new HashMap<>();
+
+            List<JobSeekerEventDto> count  = eventService.getRegisteredusers(eventDto.getId());
+
+            event.put("eventId", eventDto.getId());
+            event.put("eventTitle", eventDto.getTitle());
+            event.put("eventParticipants", count.size());
+
+            b_events.add(event);
+        }
+
+        return new ResponseEntity<>(b_events,HttpStatus.OK);
+
+
+
+    }
+
+
+
 
 
 
