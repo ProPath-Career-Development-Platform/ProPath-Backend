@@ -33,7 +33,7 @@ public interface JobService {
 
     public JobDto getJobByIdJs(Long id);
 
-    List<JobDto> getAllJobs();
+    List<JobDto> getAllJobs(List<String> filter, String jobType);
 
     List<JobDto> getAllPostedJobs();
 
