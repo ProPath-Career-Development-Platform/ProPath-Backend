@@ -23,6 +23,7 @@ public interface JobService {
     JobDto updateJob(Long id,JobDto jobDto);
 
 
+
     JobDto getPostJobById(Long postId);
 
     List<JobDto> getAllPostJobs();

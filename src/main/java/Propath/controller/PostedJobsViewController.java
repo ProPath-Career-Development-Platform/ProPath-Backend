@@ -2,9 +2,7 @@ package Propath.controller;
 
 import Propath.dto.*;
 import Propath.model.Job;
-import Propath.service.ApplicantService;
-import Propath.service.InterviewService;
-import Propath.service.JobService;
+import Propath.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +18,12 @@ public class PostedJobsViewController {
 
     @Autowired
     private JobService jobPostService;
+
+    @Autowired
+    private PdfService pdfService;
+
+    @Autowired
+    private TextMatchingService textMatchingService;
 
     @Autowired
     private ApplicantService applicantService;
@@ -75,6 +79,15 @@ public class PostedJobsViewController {
     @PostMapping("/apply")
     public ResponseEntity <ApplicantDto> saveApplication(@RequestBody ApplicantDto applicantDto){
 
+        String cvText = pdfService.extractTextFromPdfUrl(applicantDto.getCv());
+        applicantDto.setCvText(cvText);
+
+        Job job = applicantDto.getJob();
+        String jobD = job.getJobDescription();
+
+        double atsScore = textMatchingService.calculateMatchPercentage(jobD,cvText);
+
+        applicantDto.setAtsScore((int)atsScore);
         ApplicantDto savedAppliation = applicantService.saveApplication(applicantDto);
 
         return new ResponseEntity<>(savedAppliation,HttpStatus.OK);
