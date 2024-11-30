@@ -203,6 +203,8 @@ public class JobServiceImp implements JobService {
 
     }
 
+
+
     public List<Integer> findJobIdsByProviderId(int providerId){
 
         User user = userRepository.findById(providerId)
