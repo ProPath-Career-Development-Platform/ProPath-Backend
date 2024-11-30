@@ -225,12 +225,33 @@ public class JobServiceImp implements JobService {
         return jobDto;
     }
     @Override
-    public List<JobDto> getAllJobs() {
+    public List<JobDto> getAllJobs(List<String> filter, String jobType) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
+         List<Job> jobs;
+        if(filter.isEmpty()){
+             jobs =  jobRepository.findAll();
 
-        List<Job> jobs =  jobRepository.findAll();
+        }
+        else{
+            if(jobType.equals("Job Type")) {
+                jobs = jobRepository.findByJobTypeIn(filter);
+            }
+            else if(jobType.equals("Experience")){
+                jobs = jobRepository.findByExperienceIn(filter);
+
+            }
+            else if(jobType.equals("Job Role")){
+                jobs = jobRepository.findByJobRoleIn(filter);
+
+            }
+            else{
+                jobs =  jobRepository.findAll();
+
+            }
+
+        }
 
         return jobs.stream().map((job)-> {
 
