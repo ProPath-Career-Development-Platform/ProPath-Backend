@@ -9,4 +9,6 @@ public interface FavoritesJobsService {
     void removeFavoriteJob(Long jobId, Long companyId, Long userId);
 
     List<FavoritesJobsDto> getFavoriteJobs(Long userId);
+
+    Boolean isFavorite(Long jobId, Long companyId, Long userId);
 }

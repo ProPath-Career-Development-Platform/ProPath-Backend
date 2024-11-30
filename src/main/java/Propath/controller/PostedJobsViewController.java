@@ -118,8 +118,22 @@ public class PostedJobsViewController {
         return ResponseEntity.ok(favoriteJobs);
     }
 
+    // check favorite job REST API
+    @GetMapping("/is-favorite")  //localhost:8080/jobseeker/is-favorite?jobId=8&companyId=2
+    public ResponseEntity<Boolean> isFavorite(@RequestParam Long jobId, @RequestParam Long companyId) {
+        // Get the authenticated user's email
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
+        // Find the user
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Error: User is not found."));
 
+        // Check if the job is a favorite
+        Boolean isFavorite = favoritesJobsService.isFavorite(jobId, companyId, (long) user.getId());
+
+        return ResponseEntity.ok(isFavorite);
+    }
 
 
     // apply for job REST API

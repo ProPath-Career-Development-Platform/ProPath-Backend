@@ -74,4 +74,14 @@ public class FavoritesJobsServiceImp implements FavoritesJobsService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Boolean isFavorite(Long jobId, Long companyId, Long userId) {
+        // Validate that the user exists
+        User user = userRepository.findById(Math.toIntExact(userId))
+                .orElseThrow(() -> new RuntimeException("Error: User is not found."));
+
+        // Check if the job is a favorite
+        return favoritesJobsRepository.findByUserIdAndJobIdAndCompanyId(userId, jobId, companyId).isPresent();
+    }
+
 }
