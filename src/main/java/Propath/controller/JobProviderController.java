@@ -41,6 +41,9 @@ public class JobProviderController {
     @Autowired
     private ApplicantService applicantService;
 
+    @Autowired
+    private JobSeekerEventService jobSeekerEventService;
+
 
 
 
@@ -337,6 +340,43 @@ public class JobProviderController {
 
 
     }
+
+    @PostMapping("/participant/verify/{eventId}")
+    public ResponseEntity<Map<String,Object>> verifyParticipant(@RequestBody JobSeekerEventDto tokenDetails,@PathVariable("eventId") Long eventId){
+
+        JobSeekerEventDto event = jobSeekerEventService.getUserDetailsByTokenId(tokenDetails,eventId);
+//2024-12-01 19:58:58.729994
+        Map<String, Object> userDetails = new HashMap<>();
+
+        if(event == null){
+            userDetails.put("verified", false);
+
+        }else{
+
+            if(event.getIsParticipate()){
+
+                userDetails.put("participate", true);
+                userDetails.put("verified", false);
+            }else{
+                userDetails.put("userId", event.getJobSeeker().getUser().getId());
+                userDetails.put("userName", event.getJobSeeker().getUser().getUsername());
+                userDetails.put("userProPic", event.getJobSeeker().getProfilePicture());
+                userDetails.put("enrollDate", event.getAppliedDate());
+                userDetails.put("userEmail", event.getJobSeeker().getUser().getEmail());
+                userDetails.put("verified", true);
+                userDetails.put("participate", false);
+
+                jobSeekerEventService.UpdateParticipantStatus(event);
+
+            }
+
+        }
+        return new ResponseEntity<>(userDetails, HttpStatus.OK);
+
+
+    }
+
+
 
 
 

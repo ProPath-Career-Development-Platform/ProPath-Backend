@@ -30,6 +30,11 @@ public class JobseekerEvent {
 
     private Boolean isApplied;
 
+    private String qrToken;
+    private String qrImg;
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean IsParticipate;
+
 
 }
 
