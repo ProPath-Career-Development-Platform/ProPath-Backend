@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyAndJobsDto {
-    private CompanyDto company;
-    private JobDto job;
-   // private List<PostJobDto> postedJobs;
+public class FavoritesJobsDto {
+    private Long id;
+    private Long jobId;
+    private Long companyId;
+    private Long userId;
 }

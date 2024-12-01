@@ -11,6 +11,7 @@ import Propath.repository.VerficationRepository;
 import Propath.service.EmailService;
 
 import Propath.service.JwtService;
+import com.mailersend.sdk.Recipient;
 import com.mailersend.sdk.emails.Email;
 import com.mailersend.sdk.MailerSend;
 import com.mailersend.sdk.MailerSendResponse;
@@ -19,10 +20,13 @@ import com.mailersend.sdk.exceptions.MailerSendException;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import Propath.service.EmailService;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -57,6 +61,7 @@ public class EmailServiceImp implements EmailService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
 
+    private JavaMailSender mailSender;
     @Override
     public LocalDateTime add15MinutesToCurrentTime() {
         return LocalDateTime.now().plus(15, ChronoUnit.MINUTES);
@@ -222,6 +227,43 @@ public class EmailServiceImp implements EmailService {
 
     }
 
+    public void sendEmails(String mail,String companyName,String title) {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo(to);
+//        message.setSubject(subject);
+//        message.setText(body);
+//        mailSender.send(message);
+
+
+        Email email = new Email();
+
+        email.setFrom("Propath", "test@trial-jy7zpl9kpqr45vx6.mlsender.net");
+
+        email.setSubject("Interview Invitation from "+companyName);
+
+        Recipient recipient = new Recipient("Candidate",mail);
+
+        email.addRecipient(recipient.name,recipient.email);
+
+        email.setTemplateId("yzkq340w3jkgd796");
+
+
+        email.addPersonalization(recipient, "job_role",title);
+        email.addPersonalization(recipient, "company_name",companyName);
+        email.addPersonalization(recipient, "support_email", "test@trial-jy7zpl9kpqr45vx6.mlsender.net");
+
+        MailerSend ms = new MailerSend();
+
+        ms.setToken("mlsn.57050f2bfdabf9e12a14a92e27ba3ec5f2eaf39bec4af2bc64917cf43f1ae94e");
+
+        try {
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println(response.messageId);
+        } catch (MailerSendException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -229,5 +271,7 @@ public class EmailServiceImp implements EmailService {
 
 
 }
+
+
 
 

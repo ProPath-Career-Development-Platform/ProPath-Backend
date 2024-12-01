@@ -1,6 +1,8 @@
 package Propath.service.impl;
 
+import Propath.dto.EventDto;
 import Propath.dto.JobSeekerEventDto;
+import Propath.mapper.EventMapper;
 import Propath.mapper.JobSeekerEventMapper;
 import Propath.mapper.JobSeekerMapper;
 import Propath.model.*;
@@ -51,6 +53,7 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
     public String registerEvent(Long eventId) {
 
         // Get the currently authenticated user
+        String response = " ";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Assuming you store the email in the principal
 
@@ -74,9 +77,6 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
         //check user alredy registerd
         Optional<JobseekerEvent> isAlreadyReg = jobSeekerEventRepository.findByEvent_IdAndJobSeeker_Id(eventId,jobSeeker.get().getId());
 
-        if(isAlreadyReg.isPresent()){
-            throw new RuntimeException("User Alredy registerd");
-        }
 
         LocalDateTime appliedDate = LocalDateTime.now();
 
@@ -112,12 +112,59 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
         jobseekerEvent.setIsApplied(true);
 
 
+        if(isAlreadyReg.isPresent()){
+            jobseekerEvent.setRegistrationId(isAlreadyReg.get().getRegistrationId());
+
+            if(isAlreadyReg.get().getIsApplied()){
+                jobseekerEvent.setIsApplied(false);
+                applicantCount = applicantCount-2;
+                event.setCurrentParticipants(applicantCount);
+                response = "Successfully leaved the event";
+            }
+            else{
+                jobseekerEvent.setIsApplied(true);
+                response = "Successfully joined the event";
+            }
+        }
+
 
 
         //JobseekerEvent jobseekerEvent = new JobseekerEvent(event,jobSeeker,LocalDateTime.now(),true);
         //eventRepository.save(event);
         jobSeekerEventRepository.save(jobseekerEvent);
-        return "Event Registration is successful";
+        return response;
+    }
+
+    @Override
+    public List<EventDto> getFullEventDetails() {
+        List<Event> eventDtos = eventRepository.findAll();
+        return eventDtos.stream().map(EventMapper::maptoEventDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventDto getEventById(long eventId) {
+        Event event = eventRepository.findById(eventId).orElse(null);
+        return EventMapper.maptoEventDto(event);
+    }
+
+    @Override
+    public JobSeekerEventDto getJobSeekerEventById(long eventId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if(userOptional.isEmpty()){
+            throw new RuntimeException("user not found");
+        }
+
+        JobseekerEvent jobseekerEvent = jobSeekerEventRepository.findByEvent_IdAndJobSeeker_Id(eventId,userOptional.get().getId()).orElse(null);
+
+        if(jobseekerEvent==null){
+            jobseekerEvent = new JobseekerEvent(null,eventRepository.findById(eventId).orElse(null),null,null,false);
+        }
+        return JobSeekerEventMapper.maptoJobSeekerEventDto(jobseekerEvent);
     }
 
 

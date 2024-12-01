@@ -26,11 +26,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CompanyServiceImpl implements CompanyService {
 
-        private CompanyRepository companyRepository;
-        private CompanyMapper companyMapper;
-        private UserRepository userRepository;
-        private PasswordEncoder passwordEncoder;
-        private UserSubscriptionService userSubscriptionService;
+    private CompanyRepository companyRepository;
+    private CompanyMapper companyMapper;
+    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
+    private UserSubscriptionService userSubscriptionService;
 
     @Override
     public CompanyDto RegisterCompany(CompanyDto companyDto) {
@@ -150,11 +150,11 @@ public class CompanyServiceImpl implements CompanyService {
 
         Company company;
         if (companyOptional.isEmpty()) {
-          //  throw new RuntimeException("Company not found");
-             company = new Company();
+            //  throw new RuntimeException("Company not found");
+            company = new Company();
             company.setIsNew(true);
         }else{
-             company = companyOptional.get();
+            company = companyOptional.get();
             User user = company.getUser();
             if (user != null) {
                 user.clearSensitiveDataForSettings();
@@ -296,6 +296,49 @@ public class CompanyServiceImpl implements CompanyService {
             return false;
         }
     }
+
+    @Override
+    public Boolean UpdateSocial(CompanyDto companyDto){
+
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName(); // Get the username of the logged-in user
+
+            // Find the user by email
+            Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+            if (userOptional.isEmpty()) {
+                throw new RuntimeException("User not found");
+            }
+
+            // Find the company by user ID
+            Optional<Company> companyOptional = companyRepository.findByUserIdAndStatus(userOptional.get().getId(),"active");
+
+            if (companyOptional.isEmpty()) {
+                throw new RuntimeException("Company not found");
+            }
+
+            // Retrieve the Company object
+            Company company = companyOptional.get();
+
+            // Update the company details with values from CompanyDto
+            company.setXUrl(companyDto.getXUrl());
+            company.setLinkedinUrl(companyDto.getLinkedinUrl());
+            company.setYoutubeUrl(companyDto.getYoutubeUrl());
+            company.setFbUrl(companyDto.getFbUrl());
+
+            // Save the updated company object
+            companyRepository.save(company);
+
+            return true;
+
+        } catch (RuntimeException e) {
+            return false;
+        }
+
+
+    }
+
 
     @Override
     public Boolean DeleteCompany(){

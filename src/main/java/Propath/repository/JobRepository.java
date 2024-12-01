@@ -19,6 +19,9 @@ public interface JobRepository extends JpaRepository<Job,Long> {
 
 
 
+    @Query(value = "SELECT * FROM Job j WHERE j.id <> :jobId AND j.tags && cast(:tags as varchar[])", nativeQuery = true)
+    List<Job> findJobsByMatchingTags(@Param("tags") String[] tags, @Param("jobId") Long jobId);
+
 
     @Query("SELECT j.id FROM Job j WHERE j.user.id = :userId")
     List<Integer> findJobIdsByProviderId(@Param("userId")int userId);
@@ -28,4 +31,8 @@ public interface JobRepository extends JpaRepository<Job,Long> {
     List<Job> findByStatus(String active);
 
     List<Job> findByUserAndStatus(User user, String active);
+    List<Job> findByJobTypeIn(List<String> JobType);
+    List<Job> findByExperienceIn(List<String> Experience);
+    List<Job> findByJobRoleIn(List<String> JobRole);
+
 }

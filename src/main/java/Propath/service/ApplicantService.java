@@ -1,6 +1,8 @@
 package Propath.service;
 
 import Propath.dto.ApplicantDto;
+import Propath.dto.InterviewDto;
+import Propath.model.Applicant;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,5 +22,18 @@ public interface ApplicantService {
 
     Boolean updateStatusToSelected(List<Integer> ids, Long jobId);
 
+
     ApplicantDto getFormResponse(Long jobId, Integer userId);
+
+    Boolean sendEmail(List<Integer>ids,Long jobId);
+
+    Boolean checkUserAlreadyApplied(Integer userId, Long jobId);
+
+    List<ApplicantDto> getAppliedJobsByUserId(Integer userId);
+
+
+    List<ApplicantDto> getSelectedOrPreSelectedApplicants();
+
+    List<InterviewDto> getInterviewsForSelectedOrPreSelectedApplicants();
+
 }

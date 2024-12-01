@@ -1,11 +1,10 @@
 package Propath.controller;
 
-import Propath.dto.CompanyDto;
-import Propath.dto.JobDto;
-import Propath.dto.JobSeekerDto;
+import Propath.dto.*;
 import Propath.model.Company;
 import Propath.model.Job;
 import Propath.service.CompanyService;
+import Propath.service.JobSeekerEventService;
 import Propath.service.JobSeekerService;
 import Propath.service.JobService;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -24,6 +23,8 @@ public class JobSeekerController {
     private CompanyService companyService;
     @Autowired
     private JobService jobService;
+    @Autowired
+    private JobSeekerEventService jobSeekerEventService;
 
     @Autowired
     private JobSeekerService jobSeekerService;
@@ -31,8 +32,8 @@ public class JobSeekerController {
 
 
     @GetMapping("getCompany")
-    public List<JobDto> getAllCompanies(){
-        return jobService.getAllJobs();
+    public List<JobDto> getAllCompanies(@RequestParam("filter") List<String> filter, @RequestParam String jobType){
+        return jobService.getAllJobs(filter,jobType);
     }
 
     @GetMapping("getJobById")
@@ -46,6 +47,11 @@ public class JobSeekerController {
 
         JobSeekerDto jobSeekerDto = jobSeekerService.getJobSeekerDetails();
         return jobSeekerDto;
+    }
+
+    @GetMapping("getEventById/{id}")
+    public JobSeekerEventDto getEventById(@PathVariable("id") long eventId){
+        return jobSeekerEventService.getJobSeekerEventById(eventId);
     }
 
 }

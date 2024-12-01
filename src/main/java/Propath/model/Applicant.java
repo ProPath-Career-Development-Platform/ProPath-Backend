@@ -44,6 +44,10 @@ public class Applicant {
 
     private String email;
 
+    @Column(columnDefinition = "TEXT")
+    private String cvText;
+
+
     @ManyToOne
     @JoinColumn(name = "job_id", referencedColumnName = "id")
     private Job job;

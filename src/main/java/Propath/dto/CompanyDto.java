@@ -1,6 +1,7 @@
 package Propath.dto;
 
 
+import Propath.model.Company;
 import Propath.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,9 +29,39 @@ public class CompanyDto {
     private String location;
     private String contactNumber;
     private String email;
+    private String xUrl;
+    private String fbUrl;
+    private String linkedinUrl;
+    private String youtubeUrl;
     private String pwd;
     private String newPwd;
     private Boolean isNew;
     private String status;
     private User user;
+
+    public CompanyDto(Company company) {
+        this.id = company.getId();
+        this.companyName = company.getCompanyName();
+        this.aboutUs = company.getAboutUs();
+        this.logoImg = company.getLogoImg();
+        this.bannerImg = company.getBannerImg();
+        this.organizationType = company.getOrganizationType();
+        this.industryType = company.getIndustryType();
+        this.establishedDate = company.getEstablishedDate();
+        this.companyWebsite = company.getCompanyWebsite();
+        this.companyVision = company.getCompanyVision();
+        this.location = company.getLocation();
+        this.contactNumber = company.getContactNumber();
+        this.email = company.getEmail();
+        this.xUrl = company.getXUrl();
+        this.fbUrl = company.getFbUrl();
+        this.youtubeUrl = company.getYoutubeUrl();
+        this.linkedinUrl = company.getLinkedinUrl();
+        this.pwd = company.getPwd();
+        this.newPwd = company.getNewPwd();
+        this.isNew = company.getIsNew();
+        this.status = company.getStatus();
+        this.user = company.getUser(); // If User is not required as a DTO
+    }
+
 }

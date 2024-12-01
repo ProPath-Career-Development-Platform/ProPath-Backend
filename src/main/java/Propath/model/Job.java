@@ -83,5 +83,4 @@ public class Job {
     @Transient
     private Company company;
 
-
 }
