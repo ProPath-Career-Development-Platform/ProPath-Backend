@@ -14,4 +14,9 @@ public interface JobSeekerEventRepository extends JpaRepository<JobseekerEvent ,
 
     List<JobseekerEvent> findByEvent_IdAndIsAppliedTrue(Long id);
     Optional<JobseekerEvent> findByEvent_IdAndJobSeeker_Id(Long id, int seek_id);
+
+
+    Optional<JobseekerEvent> findByQrTokenAndEvent_IdAndIsAppliedTrue(String token, Long eventId);
+
+    Optional<JobseekerEvent> findByEvent_IdAndJobSeekerUser_Id(Long eventId, int userId);
 }
