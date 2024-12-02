@@ -44,12 +44,14 @@ public class EmailServiceImp implements EmailService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private String apiKey;
+    private String apiKey1;
 
     //@Allargsconstruct removed bcz -> creates a constructor with parameters for each field in the class, including apiKey
     @Autowired
     public EmailServiceImp(VerficationRepository verficationRepository, UserRepository userRepository, JwtService jwtService) {
         Dotenv dotenv = Dotenv.load();
         this.apiKey = dotenv.get("mailersend_api_key");
+        this.apiKey1 = dotenv.get("mailersend_api_key1");
         this.verficationRepository = verficationRepository;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
@@ -189,7 +191,7 @@ public class EmailServiceImp implements EmailService {
     }
 
     @Override
-    public void sendRegisterMailForJP(String name, String userEmail){
+    public void sendRegisterMailForJP(String name , String userEmail){
 
 
         //================== email part =====================
@@ -283,11 +285,11 @@ public class EmailServiceImp implements EmailService {
 
         // Initialize MailerSend and set the API key
         MailerSend ms = new MailerSend();
-        ms.setToken(apiKey); // Ensure apiKey is injected using @Value
+        ms.setToken(apiKey1); // Ensure apiKey is injected using @Value
 
         // Create email object and set "from" details
         Email email = new Email();
-        email.setFrom("ProPath", "test@trial-z86org8v3yzlew13.mlsender.net");
+        email.setFrom("ProPath", "test@trial-7dnvo4dj5yx45r86.mlsender.net");
 
         email.setSubject("Event Registration");
 
@@ -295,7 +297,7 @@ public class EmailServiceImp implements EmailService {
         email.addRecipient(userOptional.get().getUsername(), userOptional.get().getEmail()); // Use newEmail for recipient
 
         // Set the template ID from your MailerSend template
-        email.setTemplateId("k68zxl2vwv54j905");
+        email.setTemplateId("vywj2lp6ppq47oqz");
 
         // Add personalized data
         email.addPersonalization("qr_img", token.getQrImg());
