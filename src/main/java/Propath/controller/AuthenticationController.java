@@ -26,14 +26,14 @@ public class AuthenticationController {
         return ResponseEntity.ok(authservice.authenticate(request));
     }
 
-    @PutMapping("/update-profile")
-    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
-        try {
-            User updatedUser = authservice.updateProfile(updateProfileRequest);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+//    @PutMapping("/update-profile")
+//    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+//        try {
+//            User updatedUser = authservice.updateProfile(updateProfileRequest);
+//            return ResponseEntity.ok(updatedUser);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
 }

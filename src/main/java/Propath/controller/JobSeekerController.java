@@ -3,12 +3,11 @@ package Propath.controller;
 import Propath.dto.*;
 import Propath.model.Company;
 import Propath.model.Job;
-import Propath.service.CompanyService;
-import Propath.service.JobSeekerEventService;
-import Propath.service.JobSeekerService;
-import Propath.service.JobService;
+import Propath.model.User;
+import Propath.service.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +27,9 @@ public class JobSeekerController {
 
     @Autowired
     private JobSeekerService jobSeekerService;
+
+    @Autowired
+    private AuthenticationService authservice;
 
 
 
@@ -52,6 +54,16 @@ public class JobSeekerController {
     @GetMapping("getEventById/{id}")
     public JobSeekerEventDto getEventById(@PathVariable("id") long eventId){
         return jobSeekerEventService.getJobSeekerEventById(eventId);
+    }
+
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+        try {
+            User updatedUser = authservice.updateProfile(updateProfileRequest);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
