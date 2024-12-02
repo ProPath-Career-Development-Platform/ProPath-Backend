@@ -13,4 +13,6 @@ public interface InterviewService {
     List<InterviewDto> findInterviewsByJobId(Long jobId);
 
     InterviewDto updateInterview(Long interViewId, InterviewDto interviewDto);
+
+    void updateInterviewStatus(Long interviewId, String status);
 }
