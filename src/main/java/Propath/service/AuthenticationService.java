@@ -1,5 +1,6 @@
 package Propath.service;
 
+import Propath.dto.UpdateProfileRequest;
 import Propath.model.AuthenticationResponse;
 import Propath.model.User;
 import Propath.repository.UserRepository;
@@ -74,4 +75,29 @@ public class AuthenticationService {
         String token = jwtService.generateToken(user);
         return new AuthenticationResponse(token);
     }
+
+    public User updateProfile(UpdateProfileRequest updateProfileRequest) {
+        User existingUser = userRepository.findById(updateProfileRequest.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Update name and email
+        existingUser.setName(updateProfileRequest.getName());
+        existingUser.setEmail(updateProfileRequest.getEmail());
+
+        // Check if a new password is provided
+        if (updateProfileRequest.getNewPassword() != null && !updateProfileRequest.getNewPassword().isEmpty()) {
+            // Validate current password
+            if (!passwordEncoder.matches(updateProfileRequest.getCurrentPassword(), existingUser.getPassword())) {
+                throw new RuntimeException("Current password is incorrect");
+            }
+            // Update to new password
+            existingUser.setPassword(passwordEncoder.encode(updateProfileRequest.getNewPassword()));
+        }
+
+        // Update role if provided
+        existingUser.setRole(updateProfileRequest.getRole());
+
+        return userRepository.save(existingUser);
+    }
+
 }

@@ -316,9 +316,36 @@ public class EmailServiceImp implements EmailService {
     }
 
 
+    public void sendStatusMail(String jobTitle, String mail, String companyName, String name, String restBody) {
+
+        Email email = new Email();
 
 
+        email.setFrom("ProPath", "test@trial-jy7zpl9kpqr45vx6.mlsender.net");
+        email.setSubject("Application Status from "+companyName);
 
+        Recipient recipient = new Recipient(name,mail);
+
+        email.addRecipient(recipient.name,recipient.email);
+
+        email.setTemplateId("neqvygmmd1zg0p7w");
+
+        email.addPersonalization(recipient, "name",name);
+        email.addPersonalization(recipient, "job_title", jobTitle);
+        email.addPersonalization(recipient, "rest_body", restBody);
+        email.addPersonalization(recipient, "company_name", companyName);
+
+        MailerSend ms = new MailerSend();
+
+        ms.setToken("mlsn.57050f2bfdabf9e12a14a92e27ba3ec5f2eaf39bec4af2bc64917cf43f1ae94e");
+
+        try {
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println(response.messageId);
+        } catch (MailerSendException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
