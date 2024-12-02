@@ -241,6 +241,8 @@ public class JobProviderController {
             registerUser.put("profilePicture", jobSeekerEventDto.getJobSeeker().getProfilePicture());
             registerUser.put("appliedDate", jobSeekerEventDto.getAppliedDate().format(formatter));
             registerUser.put("IsApplied", jobSeekerEventDto.getIsApplied());
+            registerUser.put("IsParticipate", jobSeekerEventDto.getIsParticipate());
+            registerUser.put("qrImg", jobSeekerEventDto.getQrImg());
             registerUser.put("regID", jobSeekerEventDto.getId());
 
             registerUsers.add(registerUser);
@@ -361,7 +363,13 @@ public class JobProviderController {
                 userDetails.put("userId", event.getJobSeeker().getUser().getId());
                 userDetails.put("userName", event.getJobSeeker().getUser().getUsername());
                 userDetails.put("userProPic", event.getJobSeeker().getProfilePicture());
-                userDetails.put("enrollDate", event.getAppliedDate());
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy, hh:mm a");
+                String formattedDate = event.getAppliedDate().format(formatter);
+                userDetails.put("enrollDate", formattedDate);
+
+
+
                 userDetails.put("userEmail", event.getJobSeeker().getUser().getEmail());
                 userDetails.put("verified", true);
                 userDetails.put("participate", false);
