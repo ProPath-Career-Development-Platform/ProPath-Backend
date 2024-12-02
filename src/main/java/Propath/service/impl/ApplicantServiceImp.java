@@ -182,7 +182,7 @@ public class ApplicantServiceImp implements ApplicantService {
                         .orElseThrow(() -> new RuntimeException("Application not found for userId: " + id + " and jobId: " + jobId));
 
 
-                applicant.setStatus("Selected");
+                applicant.setStatus("selected");
                 applicantRepository.save(applicant);
             }
             return true;
