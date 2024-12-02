@@ -308,8 +308,59 @@ public class ApplicantServiceImp implements ApplicantService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void updateApplicantStatus(Integer userId, Long jobId, String status) {
+        Applicant applicant = applicantRepository.findByJobIdAndUserId(jobId, userId)
+                .orElseThrow(() -> new RuntimeException("Applicant not found"));
+        applicant.setStatus(status);
 
+        String rest_body;
+
+        if ("HIRED".equals(status)) {
+            rest_body = "We are thrilled to inform you that you have been hired for the job role you applied for! "
+                    + "Our team is excited to welcome you onboard. Please keep an eye on your inbox for further instructions and onboarding details, "
+                    + "which we will share soon.";
+        } else {
+            rest_body = "After careful consideration of all candidates, we regret to inform you that your application has not been successful. "
+                    + "This decision was not an easy one, as we received many highly qualified applications. "
+                    + "We truly value your effort and encourage you to apply for other opportunities with us in the future.";
         }
+
+        User user = applicant.getJob().getUser();
+        String companyName;
+        try {
+
+            Optional<Company> optionalCompany = companyRepository.findByUserId(user.getId());
+
+            // Get the company from the Optional
+            Company company = optionalCompany.orElseThrow(() ->
+                    new RuntimeException("Company not found for the user"));
+            companyName = company.getCompanyName();
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving the company", e);
+        }
+
+        System.out.println(applicant.getJob().getJobTitle());
+        System.out.println(applicant.getEmail());
+        System.out.println(companyName);
+        System.out.println(applicant.getUser().getName());
+        System.out.println(rest_body);
+
+
+
+        emailService.sendStatusMail(
+                applicant.getJob().getJobTitle(),
+                applicant.getEmail(),
+                companyName,
+                applicant.getUser().getName(),
+                rest_body
+        );
+
+        applicantRepository.save(applicant);
+    }
+
+
+}
 
 //    @Override
 //

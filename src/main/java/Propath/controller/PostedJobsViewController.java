@@ -136,15 +136,17 @@ public class PostedJobsViewController {
     @PostMapping("/apply")
     public ResponseEntity <ApplicantDto> saveApplication(@RequestBody ApplicantDto applicantDto){
 
-        String cvText = pdfService.extractTextFromPdfUrl(applicantDto.getCv());
-        applicantDto.setCvText(cvText);
-
-        Job job = applicantDto.getJob();
-        String jobD = job.getJobDescription();
-
-        double atsScore = textMatchingService.calculateMatchPercentage(jobD,cvText);
-
-        applicantDto.setAtsScore((int)atsScore);
+//        String cvText = pdfService.extractTextFromPdfUrl(applicantDto.getCv());
+//        applicantDto.setCvText(cvText);
+//
+//        Job job = applicantDto.getJob();
+////        String jobD = job.getJobDescription();
+//        String jobD = "";
+//
+//
+//        double atsScore = textMatchingService.calculateMatchPercentage(jobD,cvText);
+//
+//        applicantDto.setAtsScore((int)atsScore);
         ApplicantDto savedAppliation = applicantService.saveApplication(applicantDto);
 
         return new ResponseEntity<>(savedAppliation,HttpStatus.OK);

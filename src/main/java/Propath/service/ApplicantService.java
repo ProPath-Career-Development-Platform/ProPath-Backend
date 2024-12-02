@@ -36,4 +36,8 @@ public interface ApplicantService {
 
     List<InterviewDto> getInterviewsForSelectedOrPreSelectedApplicants();
 
+    void updateApplicantStatus(Integer userId, Long jobId, String status);
+
+
+
 }

@@ -15,4 +15,6 @@ public interface EmailService {
 
     void sendRegisterMailForJP(String name, String email);
     void sendEmails(String mail,String companyName,String title);
+
+    void sendStatusMail(String jobTitle, String email, String companyName, String name, String restBody);
 }

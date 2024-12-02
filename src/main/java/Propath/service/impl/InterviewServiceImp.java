@@ -65,18 +65,18 @@ public class InterviewServiceImp implements InterviewService {
 
                     // Accessing related User entity data
                     if (interview.getUser() != null) {
-                        User user = new User();
-                        user.setEmail(interview.getUser().getEmail());
-                        user.setName(interview.getUser().getName());
-                        dto.setUser(user);
+//                        User user = new User();
+//                        user.setEmail(interview.getUser().getEmail());
+//                        user.setName(interview.getUser().getName());
+                        dto.setUser(interview.getUser());
                     }
 
                     // Similarly, handle the Job entity if needed
                     if (interview.getJob() != null) {
-                        Job job = new Job();
-                        job.setId(interview.getJob().getId());
-                        job.setJobTitle(interview.getJob().getJobTitle());
-                        dto.setJob(job);
+//                        Job job = new Job();
+//                        job.setId(interview.getJob().getId());
+//                        job.setJobTitle(interview.getJob().getJobTitle());
+                        dto.setJob(interview.getJob());
                     }
 
                     return dto;
@@ -102,6 +102,15 @@ public class InterviewServiceImp implements InterviewService {
         interviewRepository.save(interview);
 
         return InterviewMapper.mapToInterviewDto(interview);
+    }
+
+    @Override
+    public void updateInterviewStatus(Long interviewId, String status) {
+        Interview interview = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new RuntimeException("Interview not found"));
+        interview.setStatus(status);
+        interviewRepository.save(interview);
+
     }
 
 

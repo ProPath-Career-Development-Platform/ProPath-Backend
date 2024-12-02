@@ -25,7 +25,8 @@ public class InterviewMapper {
                     List.of(interviewEntity.getTimeSlot()),
                     interviewEntity.getInterviewDate(),
                     interviewEntity.getUser(),
-                    interviewEntity.getJob()
+                    interviewEntity.getJob(),
+                    interviewEntity.getStatus()
             );
         } else {
             // Handle the case where the object is not an Interview
@@ -53,7 +54,8 @@ public class InterviewMapper {
                 interviewDto.getDuration(),
                 timeSlot,
                 interviewDto.getJob(),
-                interviewDto.getUser()
+                interviewDto.getUser(),
+                interviewDto.getStatus()
         );
     }
 
