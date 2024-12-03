@@ -44,6 +44,9 @@ public class JobProviderController {
     @Autowired
     private JobSeekerEventService jobSeekerEventService;
 
+    @Autowired
+    private AnalysisService analysisService;
+
 
 
 
@@ -380,6 +383,17 @@ public class JobProviderController {
 
         }
         return new ResponseEntity<>(userDetails, HttpStatus.OK);
+
+
+    }
+
+    @GetMapping("/analysis/home")
+    public ResponseEntity<Map<String,Object>> GetHomeAnalysis(){
+
+
+        Map<String, Object> analysis = analysisService.getHomeAnalysis();
+        return new ResponseEntity<>(analysis,HttpStatus.OK);
+
 
 
     }
