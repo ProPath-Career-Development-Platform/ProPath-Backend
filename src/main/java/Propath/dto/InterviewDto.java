@@ -25,6 +25,7 @@ public class InterviewDto {
     private Date interviewDate;
     private User user;
     private Job job;
+    private String status;
 
 
 }

@@ -23,6 +23,7 @@ public interface JobService {
     JobDto updateJob(Long id,JobDto jobDto);
 
 
+
     JobDto getPostJobById(Long postId);
 
     List<JobDto> getAllPostJobs();
@@ -33,10 +34,11 @@ public interface JobService {
 
     public JobDto getJobByIdJs(Long id);
 
-    List<JobDto> getAllJobs();
+    List<JobDto> getAllJobs(List<String> filter, String jobType);
 
     List<JobDto> getAllPostedJobs();
 
     List<JobDto> getRelatedJobsByTags(Long jobId);
 
+    List<JobDto> getActiveJobs();
 }

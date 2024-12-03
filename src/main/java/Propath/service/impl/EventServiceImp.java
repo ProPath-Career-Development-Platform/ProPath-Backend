@@ -181,6 +181,27 @@ public class EventServiceImp  implements EventService {
         return events.stream().map((event) -> EventMapper.maptoEventDto(event)).collect(Collectors.toList());
     }
 
+    @Override
+    public List<EventDto> getActveEventsWithUserId(){
+
+        // Get the currently authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        // Find the user by email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Event> events = eventRepository.findByUserAndDeleteFalseAndStatus(user,"active");
+
+        return events.stream()
+                .map(EventMapper::maptoEventDto)
+                .collect(Collectors.toList());
+
+    }
+
+
+
 
 
 }

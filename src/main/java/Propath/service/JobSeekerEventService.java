@@ -2,15 +2,17 @@ package Propath.service;
 
 import Propath.dto.EventDto;
 import Propath.dto.JobSeekerEventDto;
-import Propath.model.Event;
 
 import java.util.List;
 
 public interface JobSeekerEventService {
 
+    static void upDateParticipant(JobSeekerEventDto event) {
+    }
+
     public List<JobSeekerEventDto> getAllEvents();
 
-    public String registerEvent( Long eventId);
+    public JobSeekerEventDto registerEvent(Long eventId, JobSeekerEventDto jobseekerEvent);
 
     public List<EventDto> getFullEventDetails();
 
@@ -18,4 +20,8 @@ public interface JobSeekerEventService {
 
     public JobSeekerEventDto getJobSeekerEventById(long eventId);
 
- }
+    JobSeekerEventDto getUserDetailsByTokenId(JobSeekerEventDto jobSeekerEventDto, Long eventId);
+
+
+    void UpdateParticipantStatus(JobSeekerEventDto event);
+}
