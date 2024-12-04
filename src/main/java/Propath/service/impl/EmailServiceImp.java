@@ -1,9 +1,11 @@
 package Propath.service.impl;
 
 import Propath.dto.JobProviderDto;
+import Propath.dto.JobSeekerEventDto;
 import Propath.dto.VerficationTokenDto;
 import Propath.mapper.VerificationTokenMapper;
 import Propath.model.AuthenticationResponse;
+import Propath.model.Event;
 import Propath.model.User;
 import Propath.model.VerificationToken;
 import Propath.repository.UserRepository;
@@ -42,12 +44,14 @@ public class EmailServiceImp implements EmailService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private String apiKey;
+    private String apiKey1;
 
     //@Allargsconstruct removed bcz -> creates a constructor with parameters for each field in the class, including apiKey
     @Autowired
     public EmailServiceImp(VerficationRepository verficationRepository, UserRepository userRepository, JwtService jwtService) {
         Dotenv dotenv = Dotenv.load();
         this.apiKey = dotenv.get("mailersend_api_key");
+        this.apiKey1 = dotenv.get("mailersend_api_key1");
         this.verficationRepository = verficationRepository;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
@@ -187,7 +191,7 @@ public class EmailServiceImp implements EmailService {
     }
 
     @Override
-    public void sendRegisterMailForJP(String name, String userEmail){
+    public void sendRegisterMailForJP(String name , String userEmail){
 
 
         //================== email part =====================
@@ -201,7 +205,7 @@ public class EmailServiceImp implements EmailService {
         Email email = new Email();
         email.setFrom("ProPath", "test@trial-z86org8v3yzlew13.mlsender.net");
 
-        email.setSubject("Dont Stop Here!");
+        email.setSubject("Welcome To ProPath");
 
         // Use the user's email for sending the verification
         email.addRecipient(name, userEmail); // Use newEmail for recipient
@@ -264,10 +268,86 @@ public class EmailServiceImp implements EmailService {
         }
     }
 
+    @Override
+    public void sendEventQR(Event event, JobSeekerEventDto token){
+        //================== email part =====================
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+
+        // Retrieve user by email
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
 
 
 
+        // Initialize MailerSend and set the API key
+        MailerSend ms = new MailerSend();
+        ms.setToken(apiKey1); // Ensure apiKey is injected using @Value
 
+        // Create email object and set "from" details
+        Email email = new Email();
+        email.setFrom("ProPath", "test@trial-7dnvo4dj5yx45r86.mlsender.net");
+
+        email.setSubject("Event Registration");
+
+        // Use the user's email for sending the verification
+        email.addRecipient(userOptional.get().getUsername(), userOptional.get().getEmail()); // Use newEmail for recipient
+
+        // Set the template ID from your MailerSend template
+        email.setTemplateId("vywj2lp6ppq47oqz");
+
+        // Add personalized data
+        email.addPersonalization("qr_img", token.getQrImg());
+        email.addPersonalization("user_name", userOptional.get().getUsername());
+
+        email.addPersonalization("event_title", event.getTitle());
+        email.addPersonalization("event_banner", event.getBanner());
+
+
+        // Send the email
+        try {
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println("Email sent successfully, Message ID: " + response.messageId);
+
+        } catch (MailerSendException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void sendStatusMail(String jobTitle, String mail, String companyName, String name, String restBody) {
+
+        Email email = new Email();
+
+
+        email.setFrom("ProPath", "test@trial-jy7zpl9kpqr45vx6.mlsender.net");
+        email.setSubject("Application Status from "+companyName);
+
+        Recipient recipient = new Recipient(name,mail);
+
+        email.addRecipient(recipient.name,recipient.email);
+
+        email.setTemplateId("neqvygmmd1zg0p7w");
+
+        email.addPersonalization(recipient, "name",name);
+        email.addPersonalization(recipient, "job_title", jobTitle);
+        email.addPersonalization(recipient, "rest_body", restBody);
+        email.addPersonalization(recipient, "company_name", companyName);
+
+        MailerSend ms = new MailerSend();
+
+        ms.setToken("mlsn.57050f2bfdabf9e12a14a92e27ba3ec5f2eaf39bec4af2bc64917cf43f1ae94e");
+
+        try {
+            MailerSendResponse response = ms.emails().send(email);
+            System.out.println(response.messageId);
+        } catch (MailerSendException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

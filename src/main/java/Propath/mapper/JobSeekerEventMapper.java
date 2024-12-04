@@ -17,7 +17,10 @@ public class JobSeekerEventMapper {
                 jobSeekerEvent.getEvent(),
                 jobSeekerEvent.getJobSeeker(),
                 jobSeekerEvent.getAppliedDate(),
-                jobSeekerEvent.getIsApplied()
+                jobSeekerEvent.getIsApplied(),
+                jobSeekerEvent.getQrToken(),
+                jobSeekerEvent.getQrImg(),
+                jobSeekerEvent.getIsParticipate()
         );
     }
 
@@ -28,7 +31,10 @@ public class JobSeekerEventMapper {
                 jobSeekerEventDto.getEvent(),
                 jobSeekerEventDto.getJobSeeker(),
                 jobSeekerEventDto.getAppliedDate(),
-                jobSeekerEventDto.getIsApplied()
+                jobSeekerEventDto.getIsApplied(),
+                jobSeekerEventDto.getQrToken(),
+                jobSeekerEventDto.getQrImg(),
+                jobSeekerEventDto.getIsParticipate()
         );
     }
 

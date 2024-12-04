@@ -40,7 +40,7 @@ public class Interview {
     @JoinColumn(name="applicant_id", referencedColumnName = "id")
     private User user;
 
-
+    private String status;
 
 
 

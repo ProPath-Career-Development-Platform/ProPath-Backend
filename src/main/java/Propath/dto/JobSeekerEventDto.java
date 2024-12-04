@@ -19,4 +19,7 @@ public class JobSeekerEventDto {
     private JobSeeker jobSeeker;
     private LocalDateTime appliedDate;
     private Boolean isApplied;
+    private String qrToken;
+    private String qrImg;
+    private Boolean isParticipate;
 }

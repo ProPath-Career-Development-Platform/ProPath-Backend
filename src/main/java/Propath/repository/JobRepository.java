@@ -1,6 +1,7 @@
 package Propath.repository;
 
 import Propath.model.Job;
+import Propath.model.JobSeeker;
 import Propath.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,5 +32,10 @@ public interface JobRepository extends JpaRepository<Job,Long> {
     List<Job> findByStatus(String active);
 
     List<Job> findByUserAndStatus(User user, String active);
+    List<Job> findByJobTypeIn(List<String> JobType);
+    List<Job> findByExperienceIn(List<String> Experience);
+    List<Job> findByJobRoleIn(List<String> JobRole);
+
+    List<Job> findTop3ByOrderByPostedIn();
 
 }

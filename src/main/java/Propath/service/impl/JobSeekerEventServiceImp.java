@@ -4,22 +4,20 @@ import Propath.dto.EventDto;
 import Propath.dto.JobSeekerEventDto;
 import Propath.mapper.EventMapper;
 import Propath.mapper.JobSeekerEventMapper;
-import Propath.mapper.JobSeekerMapper;
 import Propath.model.*;
 import Propath.repository.EventRepository;
 import Propath.repository.JobSeekerEventRepository;
 import Propath.repository.JobSeekerRepository;
 import Propath.repository.UserRepository;
+import Propath.service.EmailService;
 import Propath.service.JobSeekerEventService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +31,7 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
     private  JobSeekerRepository jobSeekerRepository;
     private  EventRepository eventRepository;
     private  JobSeekerEventRepository jobSeekerEventRepository;
+    private EmailService emailService;
 
 
 
@@ -50,7 +49,7 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
     }
 
     @Override
-    public String registerEvent(Long eventId) {
+    public JobSeekerEventDto registerEvent(Long eventId, JobSeekerEventDto tokenDetails) {
 
         // Get the currently authenticated user
         String response = " ";
@@ -88,7 +87,7 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
 
         //Check whether user register before the deadlin
         if(appliedDate.isAfter(deadLine)){
-            return "Event is already over !!!";
+            throw  new RuntimeException("Dedline passed");
         }
         //checks whether user registers before the event reach its max participants
 
@@ -98,9 +97,10 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
         if(applicantCount+1<=event.getMaxParticipant()){
             applicantCount++;
             event.setCurrentParticipants(applicantCount);
+
         }
         else{
-            return "Enrollment is closed as the maximum number of participants has been reached.";
+            throw new RuntimeException("Maximum participant reached");
         }
 
 
@@ -110,10 +110,14 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
         jobseekerEvent.setJobSeeker(jobSeeker.get());
         jobseekerEvent.setAppliedDate(LocalDateTime.now());
         jobseekerEvent.setIsApplied(true);
+        jobseekerEvent.setQrToken(tokenDetails.getQrToken());
+        jobseekerEvent.setQrImg(tokenDetails.getQrImg());
 
 
         if(isAlreadyReg.isPresent()){
             jobseekerEvent.setRegistrationId(isAlreadyReg.get().getRegistrationId());
+            jobseekerEvent.setQrToken(isAlreadyReg.get().getQrToken());
+            jobseekerEvent.setQrImg(isAlreadyReg.get().getQrImg());
 
             if(isAlreadyReg.get().getIsApplied()){
                 jobseekerEvent.setIsApplied(false);
@@ -125,14 +129,20 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
                 jobseekerEvent.setIsApplied(true);
                 response = "Successfully joined the event";
             }
+        }else{
+
+            emailService.sendEventQR(event,tokenDetails);
+            jobseekerEvent.setIsParticipate(false);
         }
 
 
 
         //JobseekerEvent jobseekerEvent = new JobseekerEvent(event,jobSeeker,LocalDateTime.now(),true);
         //eventRepository.save(event);
+        eventRepository.save(event);
         jobSeekerEventRepository.save(jobseekerEvent);
-        return response;
+
+        return JobSeekerEventMapper.maptoJobSeekerEventDto(jobseekerEvent);
     }
 
     @Override
@@ -159,12 +169,73 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
             throw new RuntimeException("user not found");
         }
 
-        JobseekerEvent jobseekerEvent = jobSeekerEventRepository.findByEvent_IdAndJobSeeker_Id(eventId,userOptional.get().getId()).orElse(null);
+        Optional<JobSeeker> jobSeeker = jobSeekerRepository.findByUser_Id(userOptional.get().getId());
 
-        if(jobseekerEvent==null){
-            jobseekerEvent = new JobseekerEvent(null,eventRepository.findById(eventId).orElse(null),null,null,false);
+        if(jobSeeker.isEmpty()){
+            throw new RuntimeException("job seeker detail table, user not found");
         }
-        return JobSeekerEventMapper.maptoJobSeekerEventDto(jobseekerEvent);
+
+
+        //check user alredy registerd
+        Optional<JobseekerEvent> isAlreadyReg = jobSeekerEventRepository.findByEvent_IdAndJobSeeker_Id(eventId,jobSeeker.get().getId());
+
+        if(isAlreadyReg.isEmpty()){
+
+            JobseekerEvent event = new JobseekerEvent(null,eventRepository.findById(eventId).orElse(null),null,null,false,null,null,null);
+            return JobSeekerEventMapper.maptoJobSeekerEventDto(event);
+        }else{
+
+            //check boolean value
+            JobseekerEvent event = isAlreadyReg.get();
+
+            return JobSeekerEventMapper.maptoJobSeekerEventDto(event);
+
+        }
+
+    }
+
+    @Override
+    public JobSeekerEventDto getUserDetailsByTokenId(JobSeekerEventDto eventDto, Long eventId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName(); // Assuming you store the email in the principal
+
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+
+        if(userOptional.isEmpty()){
+            throw new RuntimeException("user not found");
+        }
+
+        Optional<JobseekerEvent> regDetais = jobSeekerEventRepository.findByQrTokenAndEvent_IdAndIsAppliedTrue(eventDto.getQrToken(),eventId);
+
+        if(regDetais.isEmpty()){
+            return null;
+        }else{
+
+            JobseekerEvent userDetails = regDetais.get();
+
+
+            return JobSeekerEventMapper.maptoJobSeekerEventDto(userDetails);
+
+
+        }
+
+    }
+
+
+    @Override
+    public void UpdateParticipantStatus(JobSeekerEventDto eventDto){
+
+        eventDto.setIsParticipate(true);
+        jobSeekerEventRepository.save(JobSeekerEventMapper.maptoJobSeekerEvent(eventDto));
+    }
+
+    @Override
+    public List<JobSeekerEventDto>  getEventBySeekerId(Long id) {
+        List<JobseekerEvent> jobseekerEvents = jobSeekerEventRepository.findByJobSeekerUser_Id(id);
+        return jobseekerEvents.stream().filter((event)->event.getIsApplied()).map((event)->{
+            return JobSeekerEventMapper.maptoJobSeekerEventDto(event);
+            
+            }).toList();
     }
 
 

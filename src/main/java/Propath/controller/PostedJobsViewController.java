@@ -2,12 +2,16 @@ package Propath.controller;
 
 import Propath.dto.*;
 import Propath.model.Job;
+
+import Propath.service.*;
+
 import Propath.model.User;
 import Propath.repository.UserRepository;
 import Propath.service.ApplicantService;
 import Propath.service.FavoritesJobsService;
 import Propath.service.InterviewService;
 import Propath.service.JobService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,12 @@ public class PostedJobsViewController {
 
     @Autowired
     private JobService jobPostService;
+
+    @Autowired
+    private PdfService pdfService;
+
+    @Autowired
+    private TextMatchingService textMatchingService;
 
     @Autowired
     private ApplicantService applicantService;
@@ -118,14 +128,39 @@ public class PostedJobsViewController {
         return ResponseEntity.ok(favoriteJobs);
     }
 
+    // check favorite job REST API
+    @GetMapping("/is-favorite")  //localhost:8080/jobseeker/is-favorite?jobId=8&companyId=2
+    public ResponseEntity<Boolean> isFavorite(@RequestParam Long jobId, @RequestParam Long companyId) {
+        // Get the authenticated user's email
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
 
+        // Find the user
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("Error: User is not found."));
 
+        // Check if the job is a favorite
+        Boolean isFavorite = favoritesJobsService.isFavorite(jobId, companyId, (long) user.getId());
+
+        return ResponseEntity.ok(isFavorite);
+    }
 
 
     // apply for job REST API
     @PostMapping("/apply")
     public ResponseEntity <ApplicantDto> saveApplication(@RequestBody ApplicantDto applicantDto){
 
+//        String cvText = pdfService.extractTextFromPdfUrl(applicantDto.getCv());
+//        applicantDto.setCvText(cvText);
+//
+//        Job job = applicantDto.getJob();
+////        String jobD = job.getJobDescription();
+//        String jobD = "";
+//
+//
+//        double atsScore = textMatchingService.calculateMatchPercentage(jobD,cvText);
+//
+//        applicantDto.setAtsScore((int)atsScore);
         ApplicantDto savedAppliation = applicantService.saveApplication(applicantDto);
 
         return new ResponseEntity<>(savedAppliation,HttpStatus.OK);

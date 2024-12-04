@@ -41,6 +41,12 @@ public class JobProviderController {
     @Autowired
     private ApplicantService applicantService;
 
+    @Autowired
+    private JobSeekerEventService jobSeekerEventService;
+
+    @Autowired
+    private AnalysisService analysisService;
+
 
 
 
@@ -238,6 +244,8 @@ public class JobProviderController {
             registerUser.put("profilePicture", jobSeekerEventDto.getJobSeeker().getProfilePicture());
             registerUser.put("appliedDate", jobSeekerEventDto.getAppliedDate().format(formatter));
             registerUser.put("IsApplied", jobSeekerEventDto.getIsApplied());
+            registerUser.put("IsParticipate", jobSeekerEventDto.getIsParticipate());
+            registerUser.put("qrImg", jobSeekerEventDto.getQrImg());
             registerUser.put("regID", jobSeekerEventDto.getId());
 
             registerUsers.add(registerUser);
@@ -337,6 +345,60 @@ public class JobProviderController {
 
 
     }
+
+    @PostMapping("/participant/verify/{eventId}")
+    public ResponseEntity<Map<String,Object>> verifyParticipant(@RequestBody JobSeekerEventDto tokenDetails,@PathVariable("eventId") Long eventId){
+
+        JobSeekerEventDto event = jobSeekerEventService.getUserDetailsByTokenId(tokenDetails,eventId);
+//2024-12-01 19:58:58.729994
+        Map<String, Object> userDetails = new HashMap<>();
+
+        if(event == null){
+            userDetails.put("verified", false);
+
+        }else{
+
+            if(event.getIsParticipate()){
+
+                userDetails.put("participate", true);
+                userDetails.put("verified", false);
+            }else{
+                userDetails.put("userId", event.getJobSeeker().getUser().getId());
+                userDetails.put("userName", event.getJobSeeker().getUser().getUsername());
+                userDetails.put("userProPic", event.getJobSeeker().getProfilePicture());
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy, hh:mm a");
+                String formattedDate = event.getAppliedDate().format(formatter);
+                userDetails.put("enrollDate", formattedDate);
+
+
+
+                userDetails.put("userEmail", event.getJobSeeker().getUser().getEmail());
+                userDetails.put("verified", true);
+                userDetails.put("participate", false);
+
+                jobSeekerEventService.UpdateParticipantStatus(event);
+
+            }
+
+        }
+        return new ResponseEntity<>(userDetails, HttpStatus.OK);
+
+
+    }
+
+    @GetMapping("/analysis/home")
+    public ResponseEntity<Map<String,Object>> GetHomeAnalysis(){
+
+
+        Map<String, Object> analysis = analysisService.getHomeAnalysis();
+        return new ResponseEntity<>(analysis,HttpStatus.OK);
+
+
+
+    }
+
+
 
 
 
