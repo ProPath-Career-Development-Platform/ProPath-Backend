@@ -54,4 +54,13 @@ public class JobSeekerController {
         return jobSeekerEventService.getJobSeekerEventById(eventId);
     }
 
+    @GetMapping("getNotifications/{id}")
+    public List<List<String>> getNotifications(@PathVariable("id") long id){
+        return jobSeekerService.getNotifications();
+    }
+
+    @GetMapping("getAppliedEvents/{id}")
+    public List<JobSeekerEventDto> getAppliedEvents(@PathVariable("id") long id){
+        return jobSeekerEventService.getEventBySeekerId(id);
+    }
 }

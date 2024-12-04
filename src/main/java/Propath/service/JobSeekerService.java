@@ -9,4 +9,6 @@ public interface JobSeekerService {
     public JobSeekerDto getJobSeekerDetails();
 
     List<JobSeekerDto> getJobSeekers();
+
+    List<List<String>> getNotifications();
 }

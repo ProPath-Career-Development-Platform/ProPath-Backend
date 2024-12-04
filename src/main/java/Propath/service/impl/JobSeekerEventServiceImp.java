@@ -229,5 +229,14 @@ public class JobSeekerEventServiceImp implements JobSeekerEventService {
         jobSeekerEventRepository.save(JobSeekerEventMapper.maptoJobSeekerEvent(eventDto));
     }
 
+    @Override
+    public List<JobSeekerEventDto>  getEventBySeekerId(Long id) {
+        List<JobseekerEvent> jobseekerEvents = jobSeekerEventRepository.findByJobSeekerUser_Id(id);
+        return jobseekerEvents.stream().filter((event)->event.getIsApplied()).map((event)->{
+            return JobSeekerEventMapper.maptoJobSeekerEventDto(event);
+            
+            }).toList();
+    }
+
 
 }

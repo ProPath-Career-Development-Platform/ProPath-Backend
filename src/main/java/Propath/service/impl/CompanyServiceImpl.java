@@ -414,7 +414,7 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findByUserId(id)
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + id));
 
-        company.setStatus("approve");
+        company.setStatus("active");
         Company updatedCompany = companyRepository.save(company);
         return CompanyMapper.maptoCompanyDto(updatedCompany);
     }

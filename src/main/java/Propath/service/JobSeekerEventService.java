@@ -24,4 +24,7 @@ public interface JobSeekerEventService {
 
 
     void UpdateParticipantStatus(JobSeekerEventDto event);
+
+    List<JobSeekerEventDto> getEventBySeekerId(Long id);
 }
+
